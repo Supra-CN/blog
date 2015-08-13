@@ -75,10 +75,11 @@ The **plugin** provides everything to build and test a project. for android proj
 
 - `apply plugin: 'java'`  
 packaged with Gradle; This applies the Java plugin, provides everything to build and test Java applications.  
-Gradle
+Gradle内建该插件，适用于构建和测试java工程的一切所需
 
 - `apply plugin: 'android'`  
-packaged with Gradle since v0.11.1; Like the Java plugin, provides everything to build and test android applications.
+packaged with Gradle since v0.11.1; Like the Java plugin, provides everything to build and test android applications.  
+Gradle 从v0.11.1起内建该插件，类似java插件，提供了构建和测试android工程的一切所需
 
 #### buildscript
 `buildscript { ... }` configures the code driving the build.
