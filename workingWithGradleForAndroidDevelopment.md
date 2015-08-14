@@ -256,12 +256,17 @@ java插件主要创建两个任务，这依赖于主锚任务
     这个任务执行测试  
     
 The `jar` task itself will depend directly and indirectly on other tasks: `classes` for instance will compile the Java code.  
-The tests are compiled with testClasses, but it is rarely useful to call this as test depends on it (as well as classes).  
-`jar`
+The tests are compiled with `testClasses`, but it is rarely useful to call this as `test` depends on it (as well as `classes`).  
+`jar`任务本身是直接或间接的依赖于其他任务的：其中`classes` 任务是一个用来编译java源码的实例.    
+`testClasses`任务用来编译测试用例，由于`test`任务依赖于他所以很少被直接调用，（`classes`任务也是如此）  
 
-In general, you will probably only ever call assemble or check, and ignore the other tasks.
+In general, you will probably only ever call `assemble` or `check`, and ignore the other tasks.   
+通常，我们只需要直接调用`assemble`或`check`任务就好了，其他任务可以忽略。
 
-You can see the full set of tasks and their descriptions for the Java plugin here.
+You can see the full set of tasks and their descriptions for the Java plugin [here][8].  
+完整任务表述参见官方文档[The Java Plugin][8]。   
+
+#### Android tasks | Android任务
 
 
 
