@@ -85,7 +85,6 @@ Gradle 从v0.11.1起内建该插件，类似java插件，提供了构建和测�
 `buildscript { ... }` configures the code driving the build.
 In this case, this declares that it uses the [Maven Central repository][6], and that there is a classpath dependency on a [Maven artifact][7]. This artifact is the library that contains the Android plugin for Gradle in version 0.11.1
 Note: This only affects the code running the build, not the project. The project itself needs to declare its own repositories and dependencies. This will be covered later.  
-
 `buildscript { ... }`用于配置构建脚本如何驱动构建过程。  
 上面的例子中，他描述需要使用[Maven Central repository][6]，并且有一个[Maven artifact][7]的classpath依赖关系，这神器是Gradle v0.11.1中包含安卓插件的一个库；  
 注意：这些配置仅仅影响Gradle构建系统本身的执行，跟具体的project没有关系，具体的project需要具体定义他自己的repositories和dependencies，下面将会介绍这些内容
@@ -94,19 +93,44 @@ Note: This only affects the code running the build, not the project. The project
 `android { ... }` configures all the parameters for the android build. This is the entry point for the Android DSL.
 By default, only the compilation target, and the version of the build-tools are needed. This is done with the `compileSdkVersion` and `buildtoolsVersion` properties.
 The compilation target is the same as the target property in the project.properties file of the old build system. This new property can either be assigned a int (the api level) or a string with the same value as the previous target property.  
-
 `android { ... }`用于所有与Android构建相关的参数，这是Android DSL元素的切入点；  
 默认情况下只有编译目标和编译版本是必须的，可以通过`compileSdkVersion`和`buildtoolsVersion`为其赋值。
 这里的编译目标等同于先前老编译系统的project.properties文件中`target`属性；  
 
 **Note:** You will also need a local.properties file to set the location of the SDK in the same way that the existing SDK requires, using the `sdk.dir` property.
 Alternatively, you can set an environment variable called `ANDROID_HOME`. There is no differences between the two methods, you can use the one you prefer.  
+**注意：** 仍需在local.properties文件中定义`sdk.dir`属性以指明SDK的位置，或者设置一个名为`ANDROID_HOME`的环境变量，两种方法效果等同，酌情使用。
 
-**注意：** 仍需在local.properties文件中定义`sdk.dir`属性以指明SDK的位置，  
-或者设置一个名为`ANDROID_HOME`的环境变量，两种方法效果等同，酌情使用。
+### Project Structure | 工程结构
+The basic build files above expect a default folder structure. Gradle follows the concept of convention over configuration, providing sensible default option values when possible.  
+基础构建脚本指明了一个默认的工程目录结构，Gradle支持约定优于配置的观点，在可能的情况下提供了合理的默认选项值  
 
+The basic project starts with two components called “source sets”. The main source code and the test code. These live respectively in:  
+基础工程有两个称之为“代码集”的组件。一个用来存放主代码，另一个用来存放测试用例；如下所示：
 
+- `src/main/`
+- `src/androidTest/`
 
+Inside each of these folders exists folder for each source components.
+For both the Java and Android plugin, the location of the Java source code and the Java resources:  
+目录下是各自对应的代码组件。对于java和android工程来讲，代码包括java源码和资源文件：  
+
+- `java/`
+- `resources/`
+
+For the Android plugin, extra files and folders specific to Android:  
+余下这些是目录Android工程所特有的：  
+ 
+- `AndroidManifest.xml`
+- `res/`
+- `assets/`
+- `aidl/`
+- `rs/`
+- `jni/`
+- `jniLibs/`
+
+**Note:** `src/androidTest/AndroidManifest.xml` is not needed as it is created automatically.
+**注意：** `src/androidTest/AndroidManifest.xml`无需干预，会自动创建。
 
 
 
