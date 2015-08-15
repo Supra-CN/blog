@@ -327,86 +327,135 @@ Finally, the plugin creates install/uninstall tasks for all build types (`debug`
 最终插件会针对所有构建类型 (`debug`, `release`, `test`)创建安装/卸载任务，当然，只有经过签名之后才能被安装。
 
 ### Basic Build Customization | 自定义构建过程基础
+// TODO:
 
 #### Manifest entries | Manifest选项
+// TODO:
 
 #### Build Types | 构建类型
+// TODO:
 
 #### Signing Configurations | 配置签名
+// TODO:
 
 #### Running ProGuard | 执行混淆
+// TODO:
 
 #### Shrinking Resources | 压缩资源
+// TODO:
 
 ## Dependencies, Android Libraries and Multi-project setup | 依赖关系，Android库和Multi-project配置
+// TODO:
 
 ### Dependencies on binary packages | 依赖于二进制包
+// TODO:
 
 #### Local packages | 本地包
+// TODO:
 
 #### Remote artifacts | 远端神器
+// TODO:
 
 #### Multi project setup | 多工程配置
+// TODO:
 
 ### Library projects | 库工程
+// TODO:
 
 #### Creating a Library Project | 创建库工程
+// TODO:
 
 #### Differences between a Project and a Library Project | 普通工程和库工程的区别
+// TODO:
 
 #### Referencing a Library | 引用库
+// TODO:
 
 #### Library Publication | 发布库
+// TODO:
 
 ## Testing | 测试
+// TODO:
 
 ### Unit Testing | 单元测试
+// TODO:
 
 ### Basics and Configuration | 基础和配置
+// TODO:
 
 ### Running tests | 执行测试
+// TODO:
 
 ### Testing Android Libraries | 测试Android库
+// TODO:
 
 ### Test reports | 测试报告
+// TODO:
 
 #### Single projects | 单个工程
+// TODO:
 
 #### Multi-projects reports | 多个工程
+// TODO:
 
 ### Lint support | Lint支持
+// TODO:
 
 ## Build Variants | 构建变种版本
+// TODO:
 
 ### Product flavors | 产品风味
+// TODO:
 
 ### Build Type + Product Flavor = Build Variant | 构建类型 + 产品风味 = 变种版本
+// TODO:
 
 ### Product Flavor Configuration | 配置产品风味
+// TODO:
 
 ### Sourcesets and Dependencies | 代码集与依赖关系
+// TODO:
 
 ### Building and Tasks | 构建与任务
+// TODO:
 
 ### Testing | 测试
+// TODO:
 
 ### Multi-flavor variants | 多种风味的变种版本
+// TODO:
 
 ## Advanced Build Customization | 高级自定义构建
+// TODO:
 
 ### Build options | 构建选项
+// TODO:
 
 #### Java Compilation options | java编译选项
+// TODO:
 
 #### aapt options | aapt选项
+// TODO:
 
 #### dex options | dex选项
+// TODO:
 
 ### Manipulating tasks | 操控任务
+// TODO:
 
 ### BuildType and Product Flavor property reference | 构建类型和产品风味的参数参考
+// TODO:
 
 ### Using sourceCompatibility 1.7 | 使源码兼容java 1.7
+// TODO:
+
+
+
+
+
+
+* * *
+
 
 [1]: http://tools.android.com/tech-docs/new-build-system/user-guide        "Gradle Plugin User Guide"
 [2]: https://en.wikipedia.org/wiki/Domain-specific_language                                    "wiki of DSL"
