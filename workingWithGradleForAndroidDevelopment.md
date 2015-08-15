@@ -248,8 +248,8 @@ The Java plugin creates mainly two tasks, that are dependencies of the main anch
 java插件主要创建两个任务，这依赖于主锚任务  
 
 - assemble
-    - jar  
-    	This task creates the output.  
+	- jar  
+		This task creates the output.  
     	这个任务生成产出  
     
 - check  
@@ -327,6 +327,86 @@ Finally, the plugin creates install/uninstall tasks for all build types (`debug`
 最终插件会针对所有构建类型 (`debug`, `release`, `test`)创建安装/卸载任务，当然，只有经过签名之后才能被安装。
 
 ### Basic Build Customization | 自定义构建过程基础
+
+#### Manifest entries | Manifest选项
+
+#### Build Types | 构建类型
+
+#### Signing Configurations | 配置签名
+
+#### Running ProGuard | 执行混淆
+
+#### Shrinking Resources | 压缩资源
+
+## Dependencies, Android Libraries and Multi-project setup | 依赖关系，Android库和Multi-project配置
+
+### Dependencies on binary packages | 依赖于二进制包
+
+#### Local packages | 本地包
+
+#### Remote artifacts | 远端神器
+
+#### Multi project setup | 多工程配置
+
+### Library projects | 库工程
+
+#### Creating a Library Project | 创建库工程
+
+#### Differences between a Project and a Library Project | 普通工程和库工程的区别
+
+#### Referencing a Library | 引用库
+
+#### Library Publication | 发布库
+
+## Testing | 测试
+
+### Unit Testing | 单元测试
+
+### Basics and Configuration | 基础和配置
+
+### Running tests | 执行测试
+
+### Testing Android Libraries | 测试Android库
+
+### Test reports | 测试报告
+
+#### Single projects | 单个工程
+
+#### Multi-projects reports | 多个工程
+
+### Lint support | Lint支持
+
+## Build Variants | 构建变种版本
+
+### Product flavors | 产品风味
+
+### Build Type + Product Flavor = Build Variant | 构建类型 + 产品风味 = 变种版本
+
+### Product Flavor Configuration | 配置产品风味
+
+### Sourcesets and Dependencies | 代码集与依赖关系
+
+### Building and Tasks | 构建与任务
+
+### Testing | 测试
+
+### Multi-flavor variants | 多种风味的变种版本
+
+## Advanced Build Customization | 高级自定义构建
+
+### Build options | 构建选项
+
+#### Java Compilation options | java编译选项
+
+#### aapt options | aapt选项
+
+#### dex options | dex选项
+
+### Manipulating tasks | 操控任务
+
+### BuildType and Product Flavor property reference | 构建类型和产品风味的参数参考
+
+### Using sourceCompatibility 1.7 | 使源码兼容java 1.7
 
 [1]: http://tools.android.com/tech-docs/new-build-system/user-guide        "Gradle Plugin User Guide"
 [2]: https://en.wikipedia.org/wiki/Domain-specific_language                                    "wiki of DSL"
