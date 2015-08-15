@@ -248,8 +248,8 @@ The Java plugin creates mainly two tasks, that are dependencies of the main anch
 java插件主要创建两个任务，这依赖于主锚任务  
 
 - assemble
-    - jar  
-    	This task creates the output.  
+	- jar  
+		This task creates the output.  
     	这个任务生成产出  
     
 - check  
