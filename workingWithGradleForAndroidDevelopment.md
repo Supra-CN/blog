@@ -1,6 +1,9 @@
 # working with Gradle for Android Development
 
-#### This is a summary version of the official [User Guide][1] <br /> 这是一个官方[用户指南][1]的精简版本
+**This is a summary version of the official [User Guide][1]**  
+**这是一个官方[用户指南][1]的精简版本**  
+
+[TOC]
 
 ## Introduction | 介绍
 Gradle is an advanced build system as well as an advanced build toolkit allowing to create custom build logic through plugins.  
@@ -100,7 +103,7 @@ The compilation target is the same as the target property in the project.propert
 
 **Note:** You will also need a local.properties file to set the location of the SDK in the same way that the existing SDK requires, using the `sdk.dir` property.  
 Alternatively, you can set an environment variable called `ANDROID_HOME`. There is no differences between the two methods, you can use the one you prefer.  
-**注意：** 仍需在local.properties文件中定义`sdk.dir`属性以指明SDK的位置，或者设置一个名为`ANDROID_HOME`的环境变量，两种方法效果等同，酌情使用。
+**注意：** 仍需在local.properties文件中定义`sdk.dir`属性以指明SDK的位置，或者设置一个名为`ANDROID_HOME`的环境变量，两种方法效果等同，酌情使用。  
 
 ### Project Structure | 工程结构
 The basic build files above expect a default folder structure. Gradle follows the concept of convention over configuration, providing sensible default option values when possible.  
@@ -131,7 +134,7 @@ For the Android plugin, extra files and folders specific to Android:
 - `jniLibs/`
 
 **Note:** `src/androidTest/AndroidManifest.xml` is not needed as it is created automatically.  
-**注意：** `src/androidTest/AndroidManifest.xml`无需干预，会自动创建。
+**注意：** `src/androidTest/AndroidManifest.xml`无需干预，会自动创建。  
 
 #### Configuring the Structure | 配置工程目录
 When the default project structure isn’t adequate, it is possible to configure it. According to the Gradle documentation, reconfiguring the `sourceSets` for a Java project can be done with the following:  
@@ -165,7 +168,7 @@ Gradle java plugin官方文档参见[The Java Plugin][8]
 The Android plugin uses a similar syntaxes, but because it uses its own `sourceSets`, this is done within the `android` object.    
 Here’s an example, using the old project structure for the main code and remapping the `androidTest` `sourceSet` to the tests folder:  
 对应的，android工程有类似的语法，由于使用使用了他自己的`sourceSets`，所以要定义在`android`组件中。
-下面是实现了android老工程结构的一个例子：
+下面是实现了android老工程结构的一个例子：  
 ```groovy
 android {
     sourceSets {
@@ -184,16 +187,16 @@ android {
 }
 ```
 **Note:** because the old structure put all source files (java, aidl, renderscript, and java resources) in the same folder, we need to remap all those new components of the `sourceSet` to the same `src` folder.  
-**注意：** 由于老的android工程结构把所有源码文件（包括java, aidl, renderscript, and java resources）都放在一个目录中了，所以我们需要把所有新定义的`sourceSets`统统映射到`src`目录下。
+**注意：** 由于老的android工程结构把所有源码文件（包括java, aidl, renderscript, and java resources）都放在一个目录中了，所以我们需要把所有新定义的`sourceSets`统统映射到`src`目录下。  
 
 **Note:** `setRoot()` moves the whole `sourceSet` (and its sub folders) to a new folder. This moves `src/androidTest/*` to `tests/* `  
 **注意：** `setRoot()`会将整个`sourceSet`重新映射到一个新的目录，包括他的所有子目录，上边例子把`src/androidTest/*`映射到了`tests/* `  
 
 This is Android specific and will not work on Java `sourceSets`.  
-该定制脚本尽适用于Android而不适用与java。
+该定制脚本尽适用于Android而不适用与java。  
 
 The ‘migrated’ sample shows this.    
-该脚本可以应用于老工程的迁移。
+该脚本可以应用于老工程的迁移。  
 
 ### Build Tasks | 构建任务
 
@@ -220,14 +223,14 @@ The convention for tasks is the following:
 	清除编译产出的文件  
     
 The tasks `assemble`, `check` and `build` don’t actually do anything. They are anchor tasks for the plugins to add actual tasks that do the work.  
-实际上默认情况下`assemble`, `check` 和 `build`  并没有实际执行，他提供了一个类似回调接口的机制，以供配置执行各种插件的各种任务。
+实际上默认情况下`assemble`, `check` 和 `build`  并没有实际执行，他提供了一个类似回调接口的机制，以供配置执行各种插件的各种任务。  
 
 This allows you to always call the same task(s) no matter what the type of project is, or what plugins are applied.  
 For instance, applying the `findbugs` plugin will create a new task and make `check` depend on it, making it be called whenever the `check` task is called  
 它提供了一个执行全局任务的机会，无论构建任何类型的任何project统统都会执行的任务。  
 举个例子，比如我们希望对全局都使用`findbugs`插件，就可以在此配置，执行`check`任务时执行；  
 
-list tasks from the command line：
+list tasks from the command line：  
 命令行下查看任务：  
 
 - `gradle tasks`  
@@ -263,7 +266,7 @@ The tests are compiled with `testClasses`, but it is rarely useful to call this 
 `testClasses`任务用来编译测试用例，由于`test`任务依赖于他所以很少被直接调用，（`classes`任务也是如此）  
 
 In general, you will probably only ever call `assemble` or `check`, and ignore the other tasks.   
-通常，我们只需要直接调用`assemble`或`check`任务就好了，其他任务可以忽略。
+通常，我们只需要直接调用`assemble`或`check`任务就好了，其他任务可以忽略。  
 
 You can see the full set of tasks and their descriptions for the Java plugin [here][8].  
 完整任务表述参见官方文档[The Java Plugin][8]。   
@@ -303,18 +306,20 @@ Note that `build` does not depend on `deviceCheck`, or `connectedCheck`.
 
 An Android project has at least two outputs: a debug APK and a release APK. Each of these has its own anchor task to facilitate building them separately:  
 对于Android工程而言，至少会有两个产出：一个排错版APK和一个发行版APK，对于其中的每一个都会有对应的锚点任务以便分别构建：
+
 - assemble
 	- assembleDebug
 	- assembleRelease
 
 They both depend on other tasks that execute the multiple steps needed to build an APK. The `assemble` task depends on both, so calling it will build both APKs.  
-上述两个的构建过程都依赖于多个其他任务步骤的执行，`assemble`任务又依赖于他们两个，所以执行结果会构建产生两个APK文件。
+上述两个的构建过程都依赖于多个其他任务步骤的执行，`assemble`任务又依赖于他们两个，所以执行结果会构建产生两个APK文件。  
 
-**Tip:** Gradle support camel case shortcuts for task names on the command line. For instance: `gradle aR` is the same as typing `gradle assembleRelease` as long as no other task match `aR`.
+**Tip:** Gradle support camel case shortcuts for task names on the command line. For instance: `gradle aR` is the same as typing `gradle assembleRelease` as long as no other task match `aR`.  
 **小贴士** Gradle支持驼峰式写法的缩写，举个例子：在没有其他相同匹配的情况下`gradle aR`等同于 `gradle assembleRelease`。
 
 The check anchor tasks have their own dependencies:  
 检查锚点任务有他们自己的依赖关系：
+
 - check
 	- lint
 - connectedCheck
@@ -324,13 +329,105 @@ The check anchor tasks have their own dependencies:
 	- This depends on tasks created when other plugins implement test extension points.  
 
 Finally, the plugin creates install/uninstall tasks for all build types (`debug`, `release`, `test`), as long as they can be installed (which requires signing).  
-最终插件会针对所有构建类型 (`debug`, `release`, `test`)创建安装/卸载任务，当然，只有经过签名之后才能被安装。
+最终插件会针对所有构建类型 (`debug`, `release`, `test`)创建安装/卸载任务，当然，只有经过签名之后才能被安装。  
 
 ### Basic Build Customization | 自定义构建过程基础
-// TODO:
+The Android plugin provides a broad DSL to customize most things directly from the build system.  
+Android插件提供了广范的DSL元素，用于直接定制构建系统中的大部分事物。  
 
 #### Manifest entries | Manifest选项
-// TODO:
+Through the DSL it is possible to configure the following manifest entries:  
+通过DSL组件，可以配置以下manifest选项  
+
+- minSdkVersion
+- targetSdkVersion
+- versionCode
+- versionName
+- applicationId (the effective packageName -- see [ApplicationId versus PackageName][9] for more information)
+- Package Name for the test application
+- Instrumentation test runner
+
+Example:
+
+```groovy
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    defaultConfig {
+        versionCode 12
+        versionName "2.0"
+        minSdkVersion 16
+        targetSdkVersion 16
+    }
+}
+```
+
+The `defaultConfig` element inside the `android` element is where all this configuration is defined.  
+这些配置选项都在`android`元素中包含的`defaultConfig`元素中定义。  
+
+Previous versions of the Android Plugin used *packageName* to configure the manifest 'packageName' attribute.  
+Starting in 0.11.0, you should use *applicationId* in the build.gradle to configure the manifest 'packageName' entry.  
+This was disambiguated to reduce confusion between the application's packageName (which is its ID) and java packages.  
+先前的Android插件使用*packageName*去配置manifest中的'packageName'属性。  
+但是在Gragle v0.11.0之后需要使用*applicationId*来配置manifest中的'packageName'属性。  
+这是为了消除apk包名和java报名之间的歧义。  
+
+The power of describing it in the build file is that it can be dynamic.  
+For instance, one could be reading the version name from a file somewhere or using some custom logic:  
+在构建脚本中配置这些属性的一个强大之处在于，他们可以是动态配置的；  
+如下所示，他可以给版本名赋予一个定义在任意文件中的值，或者直接通过一段自定义的逻辑代码来生成值：  
+
+```groovy
+def computeVersionName() {
+    ...
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    defaultConfig {
+        versionCode 12
+        versionName computeVersionName()
+        minSdkVersion 16
+        targetSdkVersion 16
+    }
+}
+```
+
+**Note:** Do not use function names that could conflict with existing getters in the given scope. For instance instance `defaultConfig { ...}` calling `getVersionName()` will automatically use the getter of `defaultConfig.getVersionName()` instead of the custom method.  
+**注意：** 方法名不要和给定作用范围内已有的getter名字冲突，举个例子，在`defaultConfig { ...}`的实例中调用`getVersionName()`就会自动掉`defaultConfig.getVersionName()`的getter方法，而不是自定义方法。  
+
+If a property is not set through the DSL, some default value will be used. Here’s a table of how this is processed.  
+如果某一属性没有通过DSL的方式明确声明，那么他们会按下列表格中的某认值处理。  
+
+ Property Name             | Default value in DSL object | Default value
+---------------------------|-----------------------------|---------------
+ versionCode               | -1                          | value from manifest if present
+ versionName               | null                        | value from manifest if present
+ minSdkVersion             | -1                          | value from manifest if present
+ targetSdkVersion          | -1                          | value from manifest if present
+ applicationId             | null                        | value from manifest if present
+ testApplicationId         | null                        | applicationId + “.test”
+ testInstrumentationRunner | null                        | android.test.InstrumentationTestRunner
+ signingConfig             | null                        | null
+ proguardFile              | N/A (set only)              | N/A (set only)
+ proguardFiles             | N/A (set only)              | N/A (set only)
+
+The value of the 2nd column is important if you use custom logic in the build script that queries these properties. For instance, you could write:  
+当需要在构建脚本中定制构建逻辑时，其中第二列的值是非常重要的，类似如下的写法：  
+```groovy
+if (android.defaultConfig.testInstrumentationRunner == null) {
+    // assign a better default...
+}
+```
+
+If the value remains null, then it is replaced at build time by the actual default from column 3, but the DSL element does not contain this default value so you can't query against it.  
+This is to prevent parsing the manifest of the application unless it’s really needed.  
+对于值为null的属性，它将在编译时才真正被赋上第三列中的默认值，所以不能从DSL元素中查询出他们的值。  
+这是为了防止在不必要的情况下解析manifest。  
+
 
 #### Build Types | 构建类型
 // TODO:
@@ -465,3 +562,4 @@ Finally, the plugin creates install/uninstall tasks for all build types (`debug`
 [6]: http://maven.apache.org/repository/index.html                                                   "The Central Repository"
 [7]: http://maven.apache.org/ref/3.2.5/maven-artifact/                                              "Maven artifact"
 [8]: https://docs.gradle.org/current/userguide/java_plugin.html                               "The Java Plugin"
+[9]: http://tools.android.com/tech-docs/new-build-system/applicationid-vs-packagename         "ApplicationId versus PackageName"
