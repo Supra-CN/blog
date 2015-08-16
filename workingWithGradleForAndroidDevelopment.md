@@ -428,9 +428,80 @@ This is to prevent parsing the manifest of the application unless it’s really 
 对于值为null的属性，它将在编译时才真正被赋上第三列中的默认值，所以不能从DSL元素中查询出他们的值。  
 这是为了防止在不必要的情况下解析manifest。  
 
-
 #### Build Types | 构建类型
-// TODO:
+By default, the Android plugin automatically sets up the project to build both a debug and a release version of the application.  
+These differ mostly around the ability to debug the application on a secure (non dev) devices, and how the APK is signed.  
+默认情况下，android插件会自动为工程配置两个构建类型，一个debug版，一个release版。  
+两种构建类型的区别在于debug版可以在安全设备（非开发设备）上调试，另外他们的签名方式也不同。  
+
+The debug version is signed with a key/certificate that is created automatically with a known name/password (to prevent required prompt during the build). The release is not signed during the build, this needs to happen after.  
+debug版的会自动生成一个免密码的key用来签名（这是为了防止构建过程中出现输入密码的提示框）。release版在构建时不会被签名，他需要在稍后再签名。  
+
+This configuration is done through an object called a `BuildType`. By default, 2 instances are created, a `debug` and a `release` one.  
+这是通过一个叫`BuildType`的东西配置的，默认情况下会有两个实例被创建，一个`debug`和一个`release` 。  
+
+The Android plugin allows customizing those two instances as well as creating other Build Types. This is done with the `buildTypes` DSL container:  
+android插件允许自定义这两个构建类型，并且可以创建其他构建类型，这是在`buildTypes`这个DSL容器中完成的：  
+
+```groovy
+android {
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
+
+        jnidebug.initWith(buildTypes.debug)
+        jnidebug {
+            packageNameSuffix ".jnidebug"
+            jniDebuggable true
+        }
+    }
+}
+```
+The above snippet achieves the following:  
+上面的代码片段实现了以下内容：  
+
+- Configures the default `debug` `Build` Type:  
+	配置默认的`debug`构建类型：
+	- set its package to be `<app appliationId>.debug` to be able to install both debug and release apk on the same device  
+		将其包名设置为`<app appliationId>.debug`，以便在一个设备上同时安装正式版和测试版  
+- Creates a new `BuildType` called `jnidebug` and configure it to be a copy of the `debug` build type.  
+	创建了一个名为`jnidebug`的构建类型，并将其初始化为`debug`的副本。  
+- Keep configuring the jnidebug, by enabling debug build of the JNI component, and add a different package suffix.  
+	继续配置`jnidebug`，使调试JNI组件有效，并且为定义了一个不同的apk后缀。  
+	
+Creating new Build Types is as easy as using a new element under the `buildTypes` container, either to call `initWith()` or to configure it with a closure.  
+创建一个新的构建类型就同在`buildTypes`容器下使用一个新的元素一样简单，直接调`initWith()`方法，或者直接在大括号里重新配置一个。  
+
+The possible properties and their default values are:  
+下面是一些可能用到的属性和他们的默认值：  
+
+ Property name	        | Default values for debug     | Default values for release / other
+ -----------------------|------------------------------|------------------------------------
+ debuggable	            | true	                       | false
+ jniDebuggable	        | false	                       | false
+ renderscriptDebuggable | false	                       | false
+ renderscriptOptimLevel	| 3	                           | 3
+ applicationIdSuffix	| null	                       | null
+ versionNameSuffix	    | null	                       | null
+ signingConfig	        | android.signingConfigs.debug | null
+ zipAlignEnabled	    | false	                       | true
+ minifyEnabled	        | false	                       | false
+ proguardFile	        | N/A (set only)	           | N/A (set only)
+ proguardFiles	        | N/A (set only)	           | N/A (set only)
+
+In addition to these properties, Build Types can contribute to the build with code and resources.
+For each Build Type, a new matching sourceSet is created, with a default location of
+src/<buildtypename>/
+This means the Build Type names cannot be main or androidTest (this is enforced by the plugin), and that they have to be unique to each other.
+
+Like any other source sets, the location of the build type source set can be relocated:
+android {
+    sourceSets.jnidebug.setRoot('foo/jnidebug')
+}
+Additionally, for each Build Type, a new `assemble<BuildTypeName>` task is created.
+
+
 
 #### Signing Configurations | 配置签名
 // TODO:
