@@ -490,18 +490,54 @@ The possible properties and their default values are:
  proguardFile	        | N/A (set only)	           | N/A (set only)
  proguardFiles	        | N/A (set only)	           | N/A (set only)
 
-In addition to these properties, Build Types can contribute to the build with code and resources.
-For each Build Type, a new matching sourceSet is created, with a default location of
-src/<buildtypename>/
-This means the Build Type names cannot be main or androidTest (this is enforced by the plugin), and that they have to be unique to each other.
+In addition to these properties, `Build Types` can contribute to the build with code and resources.  
+For each `Build Type`, a new matching sourceSet is created, with a default location of  
+除了上边这些属性之外，`Build Types`支持创建专有其的源码和资源。  
+对于每个`Build Type`都会创建一个新的代码集，其默认位置在：  
+	`src/<buildtypename>/`
+This means the `Build Type` names cannot be `main` or `androidTest` (this is enforced by the plugin), and that they have to be unique to each other.  
+这意味着`Build Type`的名字不能是`main`或`androidTest`（这是有android插件强制决定的），并且要保持唯一。  
 
-Like any other source sets, the location of the build type source set can be relocated:
+
+Like any other source sets, the location of the build type source set can be relocated:  
+同其他代码集一样，构建类型的代码集目录位置也可以被自定义。  
+
+```groovy
 android {
     sourceSets.jnidebug.setRoot('foo/jnidebug')
 }
-Additionally, for each Build Type, a new `assemble<BuildTypeName>` task is created.
+```
+Additionally, for each Build Type, a new `assemble<BuildTypeName>` task is created.  
+此外对于每种构建类型，都会相应的创建一个名为`assemble<BuildTypeName>`任务。  
 
+The `assembleDebug` and `assembleRelease` tasks have already been mentioned, and this is where they come from. When the `debug` and `release` Build Types are pre-created, their tasks are automatically created as well.  
+上面提到的`assembleDebug`和`assembleRelease`任务是从哪儿来的呢，他是在`debug`和`release`编译类型即将创建是自动生成的。  
 
+The `build.gradle` snippet above would then also generate an `assembleJnidebug` task, and `assemble` would be made to depend on it the same way it depends on the `assembleDebug` and `assembleRelease` tasks.  
+上述`build.gradle`中的片段将会生成一个`assembleJnidebug`任务，`assemble`会以`assembleDebug`和`assembleRelease` 相同的方式依赖于他。  
+
+**Tip:** remember that you can type `gradle aJ` to run the `assembleJnidebug` task.  
+**小贴士：** 别忘了，可以用`gradle aJ`来调用`assembleJnidebug` 任务。  
+
+Possible use case:  
+可能是应用场景：  
+
+- Permissions in debug mode only, but not in release mode  
+	发行版中没有，仅在调试模式下存在的权限  
+- Custom implementation for debugging  
+	为了调试而自定义的逻辑实现  
+- Different resources for debug mode (for instance when a resource value is tied to the signing certificate).  
+	调试模式下的特有资源（比如绑定到签名证书的资源）
+
+The code/resources of the BuildType are used in the following way:  
+构建类型的源码/资源将以下列方式使用：  
+
+- The manifest is merged into the app manifest  
+	manifest合并到app manifest  
+- The code acts as just another source folder  
+	只是存在与另一个代码目录的代码  
+- The resources are overlayed over the main resources, replacing existing values.  
+	一些凌驾于主要资源的资源，覆盖一些原先的值  
 
 #### Signing Configurations | 配置签名
 // TODO:
