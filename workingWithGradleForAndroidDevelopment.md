@@ -11,16 +11,16 @@ Gradle是一套先进的编译体系以及工具包，可以通过各种插件�
 
 ### Goals of Gradle | 目标
 - Make it easy to reuse code and resources;  
-	简化代码和资源的重用
+	简化代码和资源的重用  
 
 - Make it easy to create several variants of an application,  either for [multi-apk][5] distribution or for different flavors of an application; (Such as : pad , lite , free , full , main etc.）  
 	简化为一个项目创建多个变种版本的工作，包括支持[multi-apk][5]打包，和维护一个应用的多个不同风味的发行版（比如：pad，lite，free，full，main等）  
 
 - Make it easy to configure, extend and customize the build process  
-	简化自定义和拓展编译构建过程的工作
+	简化自定义和拓展编译构建过程的工作  
 
 - Good IDE integration  
-	优良的IDE整合支持
+	优良的IDE整合支持  
 
 ### Why Gradle? | 何得何能？
 - [Domain Specific Language (DSL)][2] to describe and manipulate the build logic  
