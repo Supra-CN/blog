@@ -540,7 +540,72 @@ The code/resources of the BuildType are used in the following way:
 	一些凌驾于主要资源的资源，覆盖一些原先的值  
 
 #### Signing Configurations | 配置签名
-// TODO:
+Signing an application requires the following:  
+对一个应用签名的要求如下：  
+
+- A keystore
+- A keystore password
+- A key alias name
+- A key password
+- The store type
+
+The location, as well as the key name, both passwords and store type form together a Signing Configuration (type `SigningConfig`)  
+签名的配置（`SigningConfig`）包括签名文件目录位置以及名称，两个密码  
+
+By default, there is a debug configuration that is setup to use a debug keystore, with a known password and a default key with a known password.  
+The debug keystore is located in `$HOME/.android/debug.keystore`, and is created if not present.  
+默认的，debug配置会自动设置一个已知name和密码的keystore。  
+他会在自动创建在`$HOME/.android/debug.keystore`目录中。
+
+It is possible to create other configurations or customize the default built-in one. This is done through the `signingConfigs` DSL container:  
+可以通过`signingConfigs`这个DSL容器配置或自定义默认的debug key：
+
+```groovy
+android {
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+        }
+
+        myConfig {
+            storeFile file("other.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+
+    buildTypes {
+        foo {
+            debuggable true
+            jniDebuggable true
+            signingConfig signingConfigs.myConfig
+        }
+    }
+}
+```
+The above snippet changes the location of the debug keystore to be at the root of the project. This automatically impacts any Build Types that are set to using it, in this case the debug Build Type.  
+上面的代码将keystore的位置定义为工程的跟目录，这将自动影响所有使用他的构建类型，上例中他将影响debug构建类型。  
+
+It also creates a new Signing Config and a new Build Type that uses the new configuration.  
+另外还创建了一个新的签名配置，并且将他应用到了一个新的构建类型上。  
+
+**Note:** Only debug keystores located in the default location will be automatically created. Changing the location of the debug keystore will not create it on-demand. Creating a SigningConfig with a different name that uses the default debug keystore location will create it automatically. In other words, it’s tied to the location of the keystore, not the name of the configuration.  
+**注意：** 只有debug keystore位于默认位置时他才会被自动创建，改变位置之后就不会自动创建了，只是创建另外一个签名配置兵使用另外的名字的话还是会自动创建的，换言之，他关心的只是keystore的所在位置，而不是配置和名字。  
+
+**Note:** Location of keystores are usually relative to the root of the project, but could be absolute paths, thought it is not recommended (except for the debug one since it is automatically created).  
+**注意：** keystores的位置通常是工程的根目录，也可以是一个绝对路径，但是不推荐这么做（除非是用于调试且自动创建的）。  
+
+**Note:**  If you are checking these files into version control, you may not want the password in the file. The following Stack Overflow [post][10] shows ways to read the values from the console, or from environment variables.
+We'll update this guide with more detailed information later.
+
+**注意：** 如果要把这些文件加入版本控制管理，有可能不希望密码被明文写在文件中，那么Stack Overflow中的这篇[帖子][10]指明了如何从命令行或环境变量读取密码值的方法。  
+我会在稍后更新这部分内容。  
+
+
+
+
+
 
 #### Running ProGuard | 执行混淆
 // TODO:
@@ -661,12 +726,13 @@ The code/resources of the BuildType are used in the following way:
 * * *
 
 
-[1]: http://tools.android.com/tech-docs/new-build-system/user-guide        "Gradle Plugin User Guide"
-[2]: https://en.wikipedia.org/wiki/Domain-specific_language                                    "wiki of DSL"
-[3]: http://www.groovy-lang.org/                                                                                   "groovy"
-[4]: https://maven.apache.org/                                                                                      "maven"
-[5]: http://developer.android.com/google/play/publishing/multiple-apks.html      "Maven Repository Centre"
-[6]: http://maven.apache.org/repository/index.html                                                   "The Central Repository"
-[7]: http://maven.apache.org/ref/3.2.5/maven-artifact/                                              "Maven artifact"
-[8]: https://docs.gradle.org/current/userguide/java_plugin.html                               "The Java Plugin"
-[9]: http://tools.android.com/tech-docs/new-build-system/applicationid-vs-packagename         "ApplicationId versus PackageName"
+[1]: http://tools.android.com/tech-docs/new-build-system/user-guide                                     "Gradle Plugin User Guide"
+[2]: https://en.wikipedia.org/wiki/Domain-specific_language                                             "wiki of DSL"
+[3]: http://www.groovy-lang.org/                                                                        "groovy"
+[4]: https://maven.apache.org/                                                                          "maven"
+[5]: http://developer.android.com/google/play/publishing/multiple-apks.html                             "Maven Repository Centre"
+[6]: http://maven.apache.org/repository/index.html                                                      "The Central Repository"
+[7]: http://maven.apache.org/ref/3.2.5/maven-artifact/                                                  "Maven artifact"
+[8]: https://docs.gradle.org/current/userguide/java_plugin.html                                         "The Java Plugin"
+[9]: http://tools.android.com/tech-docs/new-build-system/applicationid-vs-packagename                   "ApplicationId versus PackageName"
+[10]: http://stackoverflow.com/questions/18328730/how-to-create-a-release-signed-apk-file-using-gradle  "How to create a release signed apk file using Gradle?"
