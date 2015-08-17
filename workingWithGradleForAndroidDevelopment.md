@@ -698,19 +698,181 @@ You can also remove unused resources, automatically, at build time. For more inf
 // TODO:
 
 ## Build Variants | 构建变种版本
-// TODO:
+One goal of the new build system is to enable creating different versions of the same application.  
+新构建系统的目标之一是具有为同一个应用构建多个不同的变种版本的能力。  
+
+There are two main use cases:  
+下面是几个重要的应用场景：  
+
+1. Different versions of the same application. For instance, a free/demo version vs the “pro” paid application.  
+	同一个应用的不同版本，例如一个免费/试用版本和一个付费专业版应用。  
+2. Same application packaged differently for multi-apk in Google Play Store. See [Multiple APK Support][12] for more information.  
+	同一个应用，需要打多个不同的包，支持Google Play商店的multi-apk功能，详情参见[Multiple APK Support][12]。  
+3. A combination of 1. and 2. 
+	1和2综合起来的情况。  
+
+The goal was to be able to generate these different APKs from the same project, as opposed to using a single Library Projects and 2+ Application Projects.  
+目标是使用同一个工程具备生成不同版本APK的能力，而非采用一个库工程外加几个普通应用工程的方式。  
 
 ### Product flavors | 产品风味
-// TODO:
+A product flavor defines a customized version of the application build by the project. A single project can have different flavors which change the generated application.  
+产品风味定义了工程如何构建出一个定制版本，一个单独的工程可以生成多种不同版本的应用程序。  
+
+This new concept is designed to help when the differences are very minimum. If the answer to “Is this the same application?” is yes, then this is probably the way to go over Library Projects.  
+这个概念是为了帮助那些存在微小差异的产品需求而设计的，如果要问他们还算是同一个应用程序吗，那么答案是肯定的，大家可能因此而走过依赖库工程的老路。  
+
+Product flavors are declared using a `productFlavors` DSL container:  
+通过`productFlavors`DSL容器来声明产品风味  
+
+```groovy
+android {
+    ....
+
+    productFlavors {
+        flavor1 {
+            ...
+        }
+
+        flavor2 {
+            ...
+        }
+    }
+}
+```
+This creates two flavors, called `flavor1` and `flavor2`.  
+**Note:** The name of the flavors cannot collide with existing Build Type names, or with the `androidTest` sourceSet.  
+上面创建了两个产品风味，分别是`flavor1`和`flavor2`。  
+**注意：** 产品风味名不能和构建类型以及`androidTest`代码集重名。
 
 ### Build Type + Product Flavor = Build Variant | 构建类型 + 产品风味 = 变种版本
-// TODO:
+As we have seen before, each Build Type generates a new APK.  
+正如前所示，每个构建类型生成一个新的APK。  
+
+Product Flavors do the same: the output of the project becomes all possible combinations of Build Types and, if applicable, Product Flavors.  
+产品风味也一样：如果适用的话，工程将产生构建类型和产品风味的所有可能的组合。  
+
+Each (Build Type, Product Flavor) combination is called a Build Variant.  
+每个（构建类型，产品风味）的组合被称为一个构建变种。  
+
+For instance, with the default `debug` and `release` Build Types, the above example generates four Build Variants:  
+如，算上默认的`debug`和`release`两种构建类型和上面例子中的产品风味，将生成四个构建变种：  
+
+- Flavor1 - debug
+- Flavor1 - release
+- Flavor2 - debug
+- Flavor2 - release
+
+Projects with no flavors still have Build Variants, but the single `default` flavor/config is used, nameless, making the list of variants similar to the list of Build Types.  
+如果工程没有配置产品风味，他依然存在构建变种，只不过用了一个`default`的产品风味/配置，省略了名字，导致变种列表跟构建类型列表一致。  
 
 ### Product Flavor Configuration | 配置产品风味
-// TODO:
+Each flavors is configured with a closure:  
+每个风味都配置在一个大括号中：  
+
+```groovy
+android {
+    ...
+
+    defaultConfig {
+        minSdkVersion 8
+        versionCode 10
+    }
+
+    productFlavors {
+        flavor1 {
+            packageName "com.example.flavor1"
+            versionCode 20
+        }
+
+        flavor2 {
+            packageName "com.example.flavor2"
+            minSdkVersion 14
+        }
+    }
+}
+```
+Note that the `android.productFlavors.*` objects are of type `ProductFlavor` which is the same type as the `android.defaultConfig` object. This means they share the same properties.  
+注意`android.productFlavors.*`对象为`ProductFlavor`类型，与`android.defaultConfig`相同，这就意味着，他们内部有相同的配置项目。  
+
+`defaultConfig` provides the base configuration for all flavors and each flavor can override any value. In the example above, the configurations end up being:  
+`defaultConfig`提供了所以风味的默认配置，每个风味都可以覆盖重写任何配置选项，如下所示：  
+
+- flavor1
+	- packageName: com.example.flavor1
+	- minSdkVersion: 8
+	- versionCode: 20
+- flavor2
+	- packageName: com.example.flavor2
+	- minSdkVersion: 14
+	- versionCode: 10
+
+Usually, the Build Type configuration is an overlay over the other configuration. For instance, the Build Type's `packageNameSuffix` is appended to the Product Flavor's packageName.  
+通常构建类型中的设置优先级较高，会重写其他配置项。例如，构建类型的`packageNameSuffix`会加在产品风味的报名之后。  
+
+There are cases where a setting is settable on both the Build Type and the Product Flavor. In this case, it’s is on a case by case basis.  
+下列设置都可以在构建类型和产品风味中生效。个别需要视情况下而定，  
+
+For instance, signingConfig is one of these properties.  
+This enables either having all release packages share the same `SigningConfig`, by setting `android.buildTypes.release.signingConfig`, or have each release package use their own `SigningConfig` by setting each `android.productFlavors.*.signingConfig` objects separately.  
+例如，签名设置就是其中之一。  
+这使得签名既可以让所有发行版都共享`android.buildTypes.release.signingConfig`中相同的`SigningConfig`，又可以通过`android.productFlavors.*.signingConfig`为个别产品风味的发行版配置特有的`SigningConfig`。  
 
 ### Sourcesets and Dependencies | 代码集与依赖关系
-// TODO:
+Similar to Build Types, Product Flavors also contribute code and resources through their own sourceSets.  
+类似与构建类型，产品风味也可以在他们自己的源码集中提价代码。  
+
+The above example creates four sourceSets:  
+上面的例子产生了四个代码集：  
+
+- android.sourceSets.flavor1
+	Location src/flavor1/
+- android.sourceSets.flavor2
+	Location src/flavor2/
+- android.sourceSets.androidTestFlavor1
+	Location src/androidTestFlavor1/
+- android.sourceSets.androidTestFlavor2
+	Location src/androidTestFlavor2/
+
+Those sourceSets are used to build the APK, alongside `android.sourceSets.main` and the Build Type sourceSet.  
+这些代码集可以佐以主代码集`android.sourceSets.main`和构建类型代码集来构建APK。  
+
+The following rules are used when dealing with all the sourcesets used to build a single APK:  
+用于构建APK的所有代码集的处理规则如下：  
+
+- All source code (`src/*/java`) are used together as multiple folders generating a single output.
+	在多个目录下的所有代码（`src/*/java`）一同被用于产生一个构建。
+- Manifests are all merged together into a single manifest. This allows Product Flavors to have different components and/or permissions, similarly to Build Types.
+	类似与构建类型，所有需要的manifest文件被合并成一个文件，这使得不同风味的产品可以有不同的manifest文件包含不同的组件和权限。
+- All resources (Android res and assets) are used using overlay priority where the Build Type overrides the Product Flavor, which overrides the main sourceSet.
+	一切需要的资源（Android资源和assets）按后面的优先级规则重写覆盖，构建类型代码覆盖产品风味代码覆盖主代码。
+- Each Build Variant generates its own R class (or other generated source code) from the resources. Nothing is shared between variants.
+	每个变种都会从资源文件中生成他自己的独立的R文件（或其他自动生成的文件），没有任何东西是共享的。
+
+Finally, like Build Types, Product Flavors can have their own dependencies. For instance, if the flavors are used to generate a ads-based app and a paid app, one of the flavors could have a dependency on an Ads SDK, while the other does not.  
+最后，类似与构建类型，产品风味可以有自己的依赖关系，例如，产品风味被用与生成一个有广告的和一个付费的app，那么其中一个可能会依赖一个广告SDK，而另一个则不会。  
+
+```groovy
+dependencies {
+    flavor1Compile "..."
+}
+```
+In this particular case, the file `src/flavor1/AndroidManifest.xml` would probably need to include the internet permission.  
+这种情况下，`src/flavor1/AndroidManifest.xml`可能需要声明一个需要网络的权限。  
+
+Additional sourcesets are also created for each variants:  
+每个变种将会创建额外的代码集：  
+
+- android.sourceSets.flavor1Debug
+	Location src/flavor1Debug/
+- android.sourceSets.flavor1Release
+	Location src/flavor1Release/
+- android.sourceSets.flavor2Debug
+	Location src/flavor2Debug/
+- android.sourceSets.flavor2Release
+	Location src/flavor2Release/
+
+These have higher priority than the build type sourcesets, and allow customization at the variant level.  
+这些代码集的优先级高于构建类型代码集，并且在变种岑面上允许做一些自定义的工作。  
 
 ### Building and Tasks | 构建与任务
 // TODO:
@@ -764,3 +926,4 @@ You can also remove unused resources, automatically, at build time. For more inf
 [9]: http://tools.android.com/tech-docs/new-build-system/applicationid-vs-packagename                   "ApplicationId versus PackageName"
 [10]: http://stackoverflow.com/questions/18328730/how-to-create-a-release-signed-apk-file-using-gradle  "How to create a release signed apk file using Gradle?"
 [11]: http://tools.android.com/tech-docs/new-build-system/resource-shrinking                            "Resource Shrinking"
+[12]: http://developer.android.com/google/play/publishing/multiple-apks.html                            "Multiple APK Support"
