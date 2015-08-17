@@ -5,7 +5,7 @@
 [TOC]
 
 ## Introduction | 介绍
-Gradle是一套先进的编译体系以及工具包，可以通过各种插件创建自定义编译构建逻辑。
+Gradle是一套先进的编译体系以及工具包，可以通过各种插件创建自定义编译构建逻辑。  
 
 ### Goals of Gradle | 目标
 
@@ -29,10 +29,10 @@ Gradle是一套先进的编译体系以及工具包，可以通过各种插件�
 - SDK with Build Tools 19.0.0. Some features may require a more recent version.
 
 ## Basic Project | 基础工程介绍
-Gradle工程在其工程根目录有一个名为build.gradle的文件，用来描述该工程的编译构建过程
+Gradle工程在其工程根目录有一个名为build.gradle的文件，用来描述该工程的编译构建过程  
 
-### Simple build files | 简易构建脚本
-下边是一个最简单的android工程的build.gradle构建脚本
+### Simple build files | 简易构建脚本  
+下边是一个最简单的android工程的build.gradle构建脚本  
 ``` groovy
 buildscript {
     repositories {
@@ -54,12 +54,12 @@ android {
 下面是这个android构建脚本的3个基本元素  
 
 #### apply plugin
-**插件**为一个工程的构建和测试提供了一切所需，对于android工程，你需要指定应用android插件，如果指定应用java插件的话就会出编译问题；
+**插件**为一个工程的构建和测试提供了一切所需，对于android工程，你需要指定应用android插件，如果指定应用java插件的话就会出编译问题；  
 
 - `apply plugin: 'java'`  
-	Gradle内建该插件，适用于构建和测试java工程的一切所需
+	Gradle内建该插件，适用于构建和测试java工程的一切所需  
 - `apply plugin: 'android'`  
-	Gradle 从v0.11.1起内建该插件，类似java插件，提供了构建和测试android工程的一切所需
+	Gradle 从v0.11.1起内建该插件，类似java插件，提供了构建和测试android工程的一切所需  
 
 #### buildscript
 `buildscript { ... }`用于配置构建脚本如何驱动构建过程。  
@@ -200,23 +200,23 @@ java插件主要创建两个任务，这依赖于主锚任务
 #### Android tasks | Android任务
 android插件兼容并使用同其他插件相同的约定，并且额外新增了几个锚点任务:  
 
-- **assemble**
-	组装各种产出文件的任务。
-- **check**
-	执行各种检查的任务
-- **connectedCheck**
-	并行执行检查设备链接的任务，包括模拟器和真机。
-- **deviceCheck**
-	执行使用APIs链接远程设备的检查，用于持续集成。
-- **build**
-	执行组装和检查任务。
-- **clean**
-    执行清理产出的任务。
+- **assemble**  
+	组装各种产出文件的任务。  
+- **check**  
+	执行各种检查的任务 
+- **connectedCheck**  
+	并行执行检查设备链接的任务，包括模拟器和真机。  
+- **deviceCheck**  
+	执行使用APIs链接远程设备的检查，用于持续集成。  
+- **build**  
+	执行组装和检查任务。  
+- **clean**  
+    执行清理产出的任务。  
 
-新创建的锚点任务必须支持没有可用链接设备的情况。
-需要注意的是，`build`任务并不依赖于`deviceCheck`或`connectedCheck`。
+新创建的锚点任务必须支持没有可用链接设备的情况。  
+需要注意的是，`build`任务并不依赖于`deviceCheck`或`connectedCheck`。  
 
-对于Android工程而言，至少会有两个产出：一个排错版APK和一个发行版APK，对于其中的每一个都会有对应的锚点任务以便分别构建：
+对于Android工程而言，至少会有两个产出：一个排错版APK和一个发行版APK，对于其中的每一个都会有对应的锚点任务以便分别构建：  
 
 - assemble
 	- assembleDebug
@@ -226,9 +226,12 @@ android插件兼容并使用同其他插件相同的约定，并且额外新增�
 
 上述两个的构建过程都依赖于多个其他任务步骤的执行，`assemble`任务又依赖于他们两个，所以执行结果会构建产生两个APK文件。  
 
-**小贴士** Gradle支持驼峰式写法的缩写，举个例子：在没有其他相同匹配的情况下`gradle aR`等同于 `gradle assembleRelease`。
+**小贴士** Gradle支持驼峰式写法的缩写，举个例子：在没有其他相同匹配的情况下`gradle aR`等同于 `gradle assembleRelease`。  
 
-检查锚点任务有他们自己的依赖关系：
+检查锚点任务有他们自己的依赖关系：  
+**小贴士** Gradle支持驼峰式写法的缩写，举个例子：在没有其他相同匹配的情况下`gradle aR`等同于 `gradle assembleRelease`。  
+
+检查锚点任务有他们自己的依赖关系：  
 
 - check
 	- lint
@@ -423,7 +426,7 @@ The debug keystore is located in `$HOME/.android/debug.keystore`, and is created
 默认的，debug配置会自动设置一个已知name和密码的keystore。  
 他会在自动创建在`$HOME/.android/debug.keystore`目录中。
 
-可以通过`signingConfigs`这个DSL容器配置或自定义默认的debug key：
+可以通过`signingConfigs`这个DSL容器配置或自定义默认的debug key：  
 
 ```groovy
 android {
@@ -652,14 +655,14 @@ android {
 
 上面的例子产生了四个代码集：  
 
-- android.sourceSets.flavor1
-	Location src/flavor1/
-- android.sourceSets.flavor2
-	Location src/flavor2/
-- android.sourceSets.androidTestFlavor1
-	Location src/androidTestFlavor1/
-- android.sourceSets.androidTestFlavor2
-	Location src/androidTestFlavor2/
+- android.sourceSets.flavor1  
+	Location src/flavor1/  
+- android.sourceSets.flavor2  
+	Location src/flavor2/  
+- android.sourceSets.androidTestFlavor1  
+	Location src/androidTestFlavor1/  
+- android.sourceSets.androidTestFlavor2  
+	Location src/androidTestFlavor2/  
 
 这些代码集可以佐以主代码集`android.sourceSets.main`和构建类型代码集来构建APK。  
 
@@ -681,14 +684,14 @@ dependencies {
 
 每个变种将会创建额外的代码集：  
 
-- android.sourceSets.flavor1Debug
-	Location src/flavor1Debug/
-- android.sourceSets.flavor1Release
-	Location src/flavor1Release/
-- android.sourceSets.flavor2Debug
-	Location src/flavor2Debug/
-- android.sourceSets.flavor2Release
-	Location src/flavor2Release/
+- android.sourceSets.flavor1Debug  
+	Location src/flavor1Debug/  
+- android.sourceSets.flavor1Release  
+	Location src/flavor1Release/  
+- android.sourceSets.flavor2Debug  
+	Location src/flavor2Debug/  
+- android.sourceSets.flavor2Release  
+	Location src/flavor2Release/  
 
 这些代码集的优先级高于构建类型代码集，并且在变种岑面上允许做一些自定义的工作。  
 
@@ -697,11 +700,11 @@ dependencies {
 
 当引用了产品风味后，更多的构建任务会被创建，如下：  
 
-1. `assemble<Variant Name>`
+1. `assemble<Variant Name>`  
 	允许直接构建一个变种，例如`assembleFlavor1Debug`。  
-2. `assemble<Build Type Name>`
+2. `assemble<Build Type Name>`  
 	允许构建给定类型的所有APK，例如`assembleDebug`会生成`Flavor1Debug`和`Flavor2Debug`两个变种。  
-3. `assemble<Product Flavor Name>`
+3. `assemble<Product Flavor Name>`  
 	允许构建给定风味的APK，例如`assembleFlavor1`会生成`Flavor1Debug`和`Flavor1Release`两个变种。  
 
 `assemble`任务会构建所有可能的产品变种。  
