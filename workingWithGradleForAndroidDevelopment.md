@@ -875,13 +875,110 @@ These have higher priority than the build type sourcesets, and allow customizati
 这些代码集的优先级高于构建类型代码集，并且在变种岑面上允许做一些自定义的工作。  
 
 ### Building and Tasks | 构建与任务
-// TODO:
+We previously saw that each Build Type creates its own `assemble<name>` task, but that Build Variants are a combination of Build Type and Product Flavor.  
+之前我们看到根据每个构建类型会创建名外`assemble<name>`的任务，而构建变种则需要组合构建类型和产品风味。  
+
+When Product Flavors are used, more assemble-type tasks are created. These are:  
+当引用了产品风味后，更多的构建任务会被创建，如下：  
+
+1. `assemble<Variant Name>`
+	allows directly building a single variant. For instance `assembleFlavor1Debug`.  
+	允许直接构建一个变种，例如`assembleFlavor1Debug`。  
+2. `assemble<Build Type Name>`
+	allows building all APKs for a given Build Type. For instance `assembleDebug` will build both `Flavor1Debug` and `Flavor2Debug` variants.  
+	允许构建给定类型的所有APK，例如`assembleDebug`会生成`Flavor1Debug`和`Flavor2Debug`两个变种。  
+3. `assemble<Product Flavor Name>`
+	allows building all APKs for a given flavor. For instance `assembleFlavor1` will build both `Flavor1Debug` and `Flavor1Release` variants.  
+	允许构建给定风味的APK，例如`assembleFlavor1`会生成`Flavor1Debug`和`Flavor1Release`两个变种。  
+
+The task `assemble` will build all possible variants.  
+`assemble`任务会构建所有可能的产品变种。  
 
 ### Testing | 测试
 // TODO:
 
 ### Multi-flavor variants | 多种风味的变种版本
-// TODO:
+In some case, one may want to create several versions of the same apps based on more than one criteria.  
+For instance, multi-apk support in Google Play supports 4 different filters. Creating different APKs split on each filter requires being able to use more than one dimension of Product Flavors.  
+某些情况下，可能会需要使用相同的产品为不同环境构建不同APK。  
+例如在Google Play中多apk支持4中不同的过滤项。为每个不同的选项分别生成不同的APK，可以避免在一个APK中存在多份尺度资源的情况。  
+
+Consider the example of a game that has a demo and a paid version and wants to use the ABI filter in the multi-apk support. With 3 ABIs and two versions of the application, 6 APKs needs to be generated (not counting the variants introduced by the different Build Types).  
+However, the code of the paid version is the same for all three ABIs, so creating simply 6 flavors is not the way to go.  
+Instead, there are two dimensions of flavors, and variants should automatically build all possible combinations.  
+试想一下，例如一个游戏，需要分试玩版和免费版，又希望采用multi-apk支持ABI过滤出不同的安装包，那么这个应用就需要生成3个ABI和两个风味中共6个APK（这还不算构建类型）。  
+然而付费版本的几个ABI版本代码完全一样，所以简单的创建6个产品风味没有意义。  
+取而代之的是Gradle可以自动将所有可能的尺度组合都构建出来。  
+
+This feature is implemented using Flavor Dimensions. Flavors are assigned to a specific dimension  
+下面是使用风味尺度的例子，将风味应用于尺度  
+```groovy
+android {
+    ...
+
+    flavorDimensions "abi", "version"
+
+    productFlavors {
+        freeapp {
+            flavorDimension "version"
+            ...
+        }
+
+        x86 {
+            flavorDimension "abi"
+            ...
+        }
+    }
+}
+```
+
+The `android.flavorDimensions` array defines the possible dimensions, as well as the order. Each defined Product Flavor is assigned to a dimension.  
+`android.flavorDimensions`定义了一列可能的尺度以及其顺序，每个产品口味都会按尺度分配。  
+
+From the following dimensioned Product Flavors [freeapp, paidapp] and [x86, arm, mips] and the [debug, release] Build Types, the following build variants will be created:  
+根据后面的口味尺度[freeapp, paidapp]和[x86, arm, mips]和[debug, release]编译类型，可以为一个风味构建出以下不同的尺度版本。  
+
+- x86-freeapp-debug
+- x86-freeapp-release
+- arm-freeapp-debug
+- arm-freeapp-release
+- mips-freeapp-debug
+- mips-freeapp-release
+- x86-paidapp-debug
+- x86-paidapp-release
+- arm-paidapp-debug
+- arm-paidapp-release
+- mips-paidapp-debug
+- mips-paidapp-release
+
+The order of the dimension as defined by `android.flavorDimensions` is very important.  
+`android.flavorDimensions`中定义的顺序是非常重要的。  
+
+Each variant is configured by several Product Flavor objects:  
+每个变种均配置为几个产品风味对象：  
+
+- android.defaultConfig
+- One from the abi dimension
+- One from the version dimension
+
+The order of the dimension drives which flavor override the other, which is important for resources when a value in a flavor replaces a value defined in a lower priority flavor.  
+The flavor dimension is defined with higher priority first. So in this case:  
+尺度的顺序决定了覆盖关系，这对资源文件来说的很重要的，高优先级风味版本中的值会覆盖地低先级版本的。  
+定义越靠前的优先级越高，在上面的例子中优先级关系为：
+
+	`abi > version > defaultConfig`
+
+Multi-flavors projects also have additional sourcesets, similar to the variant sourcesets but without the build type:  
+多风味的工程可以有附加的代码集，类似于变种代码集，但是没有构建类型：  
+
+- android.sourceSets.x86Freeapp
+	Location src/x86Freeapp/
+- android.sourceSets.armPaidapp
+	Location src/armPaidapp/
+- etc...
+
+These allow customization at the flavor-combination level. They have higher priority than the basic flavor sourcesets, but lower priority than the build type sourcesets.  
+这允许了定制风味组合的优先级层次。他们的优先级高于基本风味的代码集，却低于构建类型的代码集。  
 
 ## Advanced Build Customization | 高级自定义构建
 // TODO:
