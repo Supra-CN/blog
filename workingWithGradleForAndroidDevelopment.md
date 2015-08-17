@@ -602,16 +602,43 @@ We'll update this guide with more detailed information later.
 **注意：** 如果要把这些文件加入版本控制管理，有可能不希望密码被明文写在文件中，那么Stack Overflow中的这篇[帖子][10]指明了如何从命令行或环境变量读取密码值的方法。  
 我会在稍后更新这部分内容。  
 
-
-
-
-
-
 #### Running ProGuard | 执行混淆
-// TODO:
+ProGuard is supported through the Gradle plugin for ProGuard version 4.10. The ProGuard plugin is applied automatically, and the tasks are created automatically if the Build Type is configured to run ProGuard through the `minifyEnabled` property.  
+ProGuard v4.10 一插件的形式被支持。已经自动应用了混淆插件，并且在构建类型中通过设置`minifyEnabled`属性，自动创建任务并开启  
+
+```groovy
+android {
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+        }
+    }
+
+    productFlavors {
+        flavor1 {
+        }
+        flavor2 {
+            proguardFile 'some-other-rules.txt'
+        }
+    }
+}
+```
+Variants use all the rules files declared in their build type, and product flavors.  
+产品变种会应用通过在所有规则文件中声明的构建类型和产品风味中的配置。  
+
+There are 2 default rules files  
+以下是两个规则文件：
+
+- proguard-android.txt
+- proguard-android-optimize.txt
+
+They are located in the SDK. Using `getDefaultProguardFile()` will return the full path to the files. They are identical except for enabling optimizations.  
+他俩位于SDK中，可以通过`getDefaultProguardFile()`方法得到他俩的完整位置，他俩除了是否应用优化之外完全相同。  
 
 #### Shrinking Resources | 压缩资源
-// TODO:
+You can also remove unused resources, automatically, at build time. For more information, see the [Resource Shrinking][11] document.  
+可以在编译时自动删除没有使用的资源，详情参见文档[压缩资源][11]
 
 ## Dependencies, Android Libraries and Multi-project setup | 依赖关系，Android库和Multi-project配置
 // TODO:
@@ -736,3 +763,4 @@ We'll update this guide with more detailed information later.
 [8]: https://docs.gradle.org/current/userguide/java_plugin.html                                         "The Java Plugin"
 [9]: http://tools.android.com/tech-docs/new-build-system/applicationid-vs-packagename                   "ApplicationId versus PackageName"
 [10]: http://stackoverflow.com/questions/18328730/how-to-create-a-release-signed-apk-file-using-gradle  "How to create a release signed apk file using Gradle?"
+[11]: http://tools.android.com/tech-docs/new-build-system/resource-shrinking                            "Resource Shrinking"
