@@ -7,14 +7,14 @@
 
 ## Introduction | 介绍
 Gradle is an advanced build system as well as an advanced build toolkit allowing to create custom build logic through plugins.  
-Gradle是一套先进的编译体系以及工具包，可以通过各种插件创建自定义编译构建逻辑。
+Gradle是一套先进的编译体系以及工具包，可以通过各种插件创建自定义编译构建逻辑。  
 
 ### Goals of Gradle | 目标
 - Make it easy to reuse code and resources;  
 	简化代码和资源的重用
 
 - Make it easy to create several variants of an application,  either for [multi-apk][5] distribution or for different flavors of an application; (Such as : pad , lite , free , full , main etc.）  
-	简化为一个项目创建多个变种版本的工作，包括支持[multi-apk][5]打包，和维护一个应用的多个不同风味的发行版（比如：pad，lite，free，full，main等）
+	简化为一个项目创建多个变种版本的工作，包括支持[multi-apk][5]打包，和维护一个应用的多个不同风味的发行版（比如：pad，lite，free，full，main等）  
 
 - Make it easy to configure, extend and customize the build process  
 	简化自定义和拓展编译构建过程的工作
@@ -24,22 +24,22 @@ Gradle是一套先进的编译体系以及工具包，可以通过各种插件�
 
 ### Why Gradle? | 何得何能？
 - [Domain Specific Language (DSL)][2] to describe and manipulate the build logic  
-	使用[领域特定语言 (DSL)][2]来表述和操控编译构建逻辑
+	使用[领域特定语言 (DSL)][2]来表述和操控编译构建逻辑  
 
 - Build files are [Groovy][3] based and allow mixing of declarative elements through the DSL and using code to manipulate the DSL elements to provide custom logic.  
-	编译脚本文件基于 [Groovy][3]，并且允许采用DSL和代码混合使用的方式来操控DSL元素，从而自定义构建过程
+	编译脚本文件基于 [Groovy][3]，并且允许采用DSL和代码混合使用的方式来操控DSL元素，从而自定义构建过程  
 
 - Built-in dependency management through [Maven][4] and/or Ivy  
-	可以选择采用[Maven][4]或Ivy来实现内置的工程包依赖管理系统
+	可以选择采用[Maven][4]或Ivy来实现内置的工程包依赖管理系统  
 
 - Very flexible. Allows using best practices but doesn’t force its own way of doing things.  
-	相当灵活，允许采用最佳的实践方案，但不会强制拘束任何实践细节
+	相当灵活，允许采用最佳的实践方案，但不会强制拘束任何实践细节  
 
 - Plugins can expose their own DSL and their own API for build files to use.  
-	插件可以暴露一部分DSL元素和API一共编译脚本文件使用
+	插件可以暴露一部分DSL元素和API一共编译脚本文件使用  
 
 - Good Tooling API allowing IDE integration  
-	提供了一套优良的工具API以供IDE集成使用
+	提供了一套优良的工具API以供IDE集成使用  
 
 ## Requirements | 系统要求
 - Gradle 1.10 or 1.11 or 1.12 with the plugin 0.11.1
@@ -47,11 +47,11 @@ Gradle是一套先进的编译体系以及工具包，可以通过各种插件�
 
 ## Basic Project | 基础工程介绍
 A Gradle project describes its build in a file called build.gradle located in the root folder of the project.  
-Gradle工程在其工程根目录有一个名为build.gradle的文件，用来描述该工程的编译构建过程
+Gradle工程在其工程根目录有一个名为build.gradle的文件，用来描述该工程的编译构建过程  
 
 ### Simple build files | 简易构建脚本
 The most simple Android project has the following build.gradle;   
-下边是一个最简单的android工程的build.gradle构建脚本
+下边是一个最简单的android工程的build.gradle构建脚本  
 ``` groovy
 buildscript {
     repositories {
@@ -75,15 +75,14 @@ There are 3 main areas to this Android build file:
 
 #### apply plugin
 The **plugin** provides everything to build and test a project. for android project, You should only apply the android plugin. Applying the java plugin as well will result in a build error.  
-**插件**为一个工程的构建和测试提供了一切所需，对于android工程，你需要指定应用android插件，如果指定应用java插件的话就会出编译问题；
+**插件**为一个工程的构建和测试提供了一切所需，对于android工程，你需要指定应用android插件，如果指定应用java插件的话就会出编译问题；  
 
 - `apply plugin: 'java'`  
 	packaged with Gradle; This applies the Java plugin, provides everything to build and test Java applications.  
-	Gradle内建该插件，适用于构建和测试java工程的一切所需
-
+	Gradle内建该插件，适用于构建和测试java工程的一切所需  
 - `apply plugin: 'android'`  
 	packaged with Gradle since v0.11.1; Like the Java plugin, provides everything to build and test android applications.  
-	Gradle 从v0.11.1起内建该插件，类似java插件，提供了构建和测试android工程的一切所需
+	Gradle 从v0.11.1起内建该插件，类似java插件，提供了构建和测试android工程的一切所需  
 
 #### buildscript
 `buildscript { ... }` configures the code driving the build.    
@@ -275,37 +274,37 @@ You can see the full set of tasks and their descriptions for the Java plugin [he
 The Android plugin use the same convention to stay compatible with other plugins, and adds an additional anchor task:  
 android插件兼容并使用同其他插件相同的约定，并且额外新增了几个锚点任务:  
 
-- **assemble**
+- **assemble**  
 	The task to assemble the output(s) of the project  
-	组装各种产出文件的任务。
+	组装各种产出文件的任务。  
 	
-- **check**
+- **check**  
 	The task to run all the checks.  
-	执行各种检查的任务
+	执行各种检查的任务  
 	
-- **connectedCheck**
+- **connectedCheck**  
 	Runs checks that requires a connected device or emulator. they will run on all connected devices in parallel.  
-	并行执行检查设备链接的任务，包括模拟器和真机。
+	并行执行检查设备链接的任务，包括模拟器和真机。  
 	
-- **deviceCheck**
+- **deviceCheck**  
 	Runs checks using APIs to connect to remote devices. This is used on CI servers.  
-	执行使用APIs链接远程设备的检查，用于持续集成。
+	执行使用APIs链接远程设备的检查，用于持续集成。  
 	
-- **build**
-	This task does both assemble and check
-	执行组装和检查任务。
+- **build**  
+	This task does both assemble and check  
+	执行组装和检查任务。  
 	
-- **clean**
-	This task cleans the output of the project
-    执行清理产出的任务。
+- **clean**  
+	This task cleans the output of the project  
+    执行清理产出的任务。  
 
 The new anchor tasks are necessary in order to be able to run regular checks without needing a connected device.  
 Note that `build` does not depend on `deviceCheck`, or `connectedCheck`.  
-新创建的锚点任务必须支持没有可用链接设备的情况。
-需要注意的是，`build`任务并不依赖于`deviceCheck`或`connectedCheck`。
+新创建的锚点任务必须支持没有可用链接设备的情况。  
+需要注意的是，`build`任务并不依赖于`deviceCheck`或`connectedCheck`。  
 
 An Android project has at least two outputs: a debug APK and a release APK. Each of these has its own anchor task to facilitate building them separately:  
-对于Android工程而言，至少会有两个产出：一个排错版APK和一个发行版APK，对于其中的每一个都会有对应的锚点任务以便分别构建：
+对于Android工程而言，至少会有两个产出：一个排错版APK和一个发行版APK，对于其中的每一个都会有对应的锚点任务以便分别构建：  
 
 - assemble
 	- assembleDebug
@@ -315,10 +314,10 @@ They both depend on other tasks that execute the multiple steps needed to build 
 上述两个的构建过程都依赖于多个其他任务步骤的执行，`assemble`任务又依赖于他们两个，所以执行结果会构建产生两个APK文件。  
 
 **Tip:** Gradle support camel case shortcuts for task names on the command line. For instance: `gradle aR` is the same as typing `gradle assembleRelease` as long as no other task match `aR`.  
-**小贴士** Gradle支持驼峰式写法的缩写，举个例子：在没有其他相同匹配的情况下`gradle aR`等同于 `gradle assembleRelease`。
+**小贴士** Gradle支持驼峰式写法的缩写，举个例子：在没有其他相同匹配的情况下`gradle aR`等同于 `gradle assembleRelease`。  
 
 The check anchor tasks have their own dependencies:  
-检查锚点任务有他们自己的依赖关系：
+检查锚点任务有他们自己的依赖关系：  
 
 - check
 	- lint
@@ -558,7 +557,7 @@ The debug keystore is located in `$HOME/.android/debug.keystore`, and is created
 他会在自动创建在`$HOME/.android/debug.keystore`目录中。
 
 It is possible to create other configurations or customize the default built-in one. This is done through the `signingConfigs` DSL container:  
-可以通过`signingConfigs`这个DSL容器配置或自定义默认的debug key：
+可以通过`signingConfigs`这个DSL容器配置或自定义默认的debug key：  
 
 ```groovy
 android {
@@ -824,14 +823,14 @@ Similar to Build Types, Product Flavors also contribute code and resources throu
 The above example creates four sourceSets:  
 上面的例子产生了四个代码集：  
 
-- android.sourceSets.flavor1
-	Location src/flavor1/
-- android.sourceSets.flavor2
-	Location src/flavor2/
-- android.sourceSets.androidTestFlavor1
-	Location src/androidTestFlavor1/
-- android.sourceSets.androidTestFlavor2
-	Location src/androidTestFlavor2/
+- android.sourceSets.flavor1  
+	Location src/flavor1/  
+- android.sourceSets.flavor2  
+	Location src/flavor2/  
+- android.sourceSets.androidTestFlavor1  
+	Location src/androidTestFlavor1/  
+- android.sourceSets.androidTestFlavor2  
+	Location src/androidTestFlavor2/  
 
 Those sourceSets are used to build the APK, alongside `android.sourceSets.main` and the Build Type sourceSet.  
 这些代码集可以佐以主代码集`android.sourceSets.main`和构建类型代码集来构建APK。  
@@ -862,14 +861,14 @@ In this particular case, the file `src/flavor1/AndroidManifest.xml` would probab
 Additional sourcesets are also created for each variants:  
 每个变种将会创建额外的代码集：  
 
-- android.sourceSets.flavor1Debug
-	Location src/flavor1Debug/
-- android.sourceSets.flavor1Release
-	Location src/flavor1Release/
-- android.sourceSets.flavor2Debug
-	Location src/flavor2Debug/
-- android.sourceSets.flavor2Release
-	Location src/flavor2Release/
+- android.sourceSets.flavor1Debug  
+	Location src/flavor1Debug/  
+- android.sourceSets.flavor1Release  
+	Location src/flavor1Release/  
+- android.sourceSets.flavor2Debug  
+	Location src/flavor2Debug/  
+- android.sourceSets.flavor2Release  
+	Location src/flavor2Release/  
 
 These have higher priority than the build type sourcesets, and allow customization at the variant level.  
 这些代码集的优先级高于构建类型代码集，并且在变种岑面上允许做一些自定义的工作。  
@@ -881,13 +880,13 @@ We previously saw that each Build Type creates its own `assemble<name>` task, bu
 When Product Flavors are used, more assemble-type tasks are created. These are:  
 当引用了产品风味后，更多的构建任务会被创建，如下：  
 
-1. `assemble<Variant Name>`
+1. `assemble<Variant Name>`  
 	allows directly building a single variant. For instance `assembleFlavor1Debug`.  
 	允许直接构建一个变种，例如`assembleFlavor1Debug`。  
-2. `assemble<Build Type Name>`
+2. `assemble<Build Type Name>`  
 	allows building all APKs for a given Build Type. For instance `assembleDebug` will build both `Flavor1Debug` and `Flavor2Debug` variants.  
 	允许构建给定类型的所有APK，例如`assembleDebug`会生成`Flavor1Debug`和`Flavor2Debug`两个变种。  
-3. `assemble<Product Flavor Name>`
+3. `assemble<Product Flavor Name>`  
 	allows building all APKs for a given flavor. For instance `assembleFlavor1` will build both `Flavor1Debug` and `Flavor1Release` variants.  
 	允许构建给定风味的APK，例如`assembleFlavor1`会生成`Flavor1Debug`和`Flavor1Release`两个变种。  
 
