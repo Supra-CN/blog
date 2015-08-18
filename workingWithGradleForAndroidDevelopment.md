@@ -640,16 +640,74 @@ You can also remove unused resources, automatically, at build time. For more inf
 可以在编译时自动删除没有使用的资源，详情参见文档[压缩资源][11]
 
 ## Dependencies, Android Libraries and Multi-project setup | 依赖关系，Android库和Multi-project配置
-// TODO:
+Gradle projects can have dependencies on other components. These components can be external binary packages, or other Gradle projects.  
+Gradle工程有可能是依赖于其他组件的，这些组件可以是一个外部的二进制包，或者是另外一个Gradle工程  
 
 ### Dependencies on binary packages | 依赖于二进制包
-// TODO:
-
 #### Local packages | 本地包
-// TODO:
+To configure a dependency on an external library jar, you need to add a dependency on the `compile` configuration.  
+可以通过配置`compile`属性来配置一个外部jar包。
+
+```groovy
+dependencies {
+    compile files('libs/foo.jar')
+}
+
+android {
+    ...
+}
+```
+
+**Note:** the `dependencies` DSL element is part of the standard Gradle API and does not belong inside the `android` element.  
+**注意：** `dependencies`DSL元素是Gradle标准API的一部分，而并非属于`android`元素。  
+
+The compile configuration is used to compile the main application. Everything in it is added to the compilation classpath and also packaged in the final APK.  
+There are other possible configurations to add dependencies to:  
+该编译配置将会用在编译主应用时，他定义的所有东西都会加入编译的classpath，并且会被打进最终的包里。  
+其他添加依赖关系的方式有如下几种：
+
+- `compile`: main application
+- `androidTestCompile`: test application
+- `debugCompile`: debug Build Type
+- `releaseCompile`: release Build Type.
+
+Because it’s not possible to build an APK that does not have an associated Build Type, the APK is always configured with two (or more) configurations: `compile` and `<buildtype>Compile`.  
+Creating a new Build Type automatically creates a new configuration based on its name.  
+以为依赖库本身并不能构建出一个APK文件来，所以他们不支持划分编译类型，APK的编译类型永远只有这两大类： `compile` and `<buildtype>Compile`。  
+创建一个新的构建类型将会基于构建类型名称自动的生成一个新的构建配置。  
+
+This can be useful if the debug version needs to use a custom library (to report crashes for instance), while the release doesn’t, or if they rely on different versions of the same library.  
+这在下边的情况下是很有用的，如调试版本需要用到一个特殊的库（比如崩溃报告），而发行版并不需要，或者他们依赖于同一个库的不同版本。  
 
 #### Remote artifacts | 远端神器
-// TODO:
+Gradle supports pulling artifacts from Maven and Ivy repositories.  
+Gradle支持采用Maven和Ivy自动拉去远端神器（就是指具体的依赖包）。
+
+First the repository must be added to the list, and then the dependency must be declared in a way that Maven or Ivy declare their artifacts.  
+首先，依赖包的库必须在他们的可用列表里，然后，需要按照Maven或Ivy的方式把他们声明出来。  
+
+```groovy
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile 'com.google.guava:guava:11.0.2'
+}
+
+android {
+    ...
+}
+```
+
+**Note:** `mavenCentral()` is a shortcut to specifying the URL of the repository. Gradle supports both remote and local repositories.  
+**Note:** Gradle will follow all dependencies transitively. This means that if a dependency has dependencies of its own, those are pulled in as well.  
+**注意：** `mavenCentral()`是指定中心仓库URL的快捷方式,Gradle同时支持远端和本地仓库。  
+**注意：** Gradle遵循依赖关系的传递性，这意味着他可以管理依赖的依赖。  
+
+For more information about setting up dependencies, read the Gradle user guide [here][13], and DSL documentation [here][14].  
+更多依赖关系配置的咨询详见[Gradle用户指南][13]和[DSL文档][14]
 
 #### Multi project setup | 多工程配置
 // TODO:
@@ -1023,3 +1081,5 @@ These allow customization at the flavor-combination level. They have higher prio
 [10]: http://stackoverflow.com/questions/18328730/how-to-create-a-release-signed-apk-file-using-gradle  "How to create a release signed apk file using Gradle?"
 [11]: http://tools.android.com/tech-docs/new-build-system/resource-shrinking                            "Resource Shrinking"
 [12]: http://developer.android.com/google/play/publishing/multiple-apks.html                            "Multiple APK Support"
+[13]: http://gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html                      "Dependency Management Basics"
+[14]: http://gradle.org/docs/current/dsl/org.gradle.api.artifacts.dsl.DependencyHandler.html            "DependencyHandler"
