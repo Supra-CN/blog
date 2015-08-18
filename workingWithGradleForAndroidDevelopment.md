@@ -707,25 +707,186 @@ android {
 **注意：** Gradle遵循依赖关系的传递性，这意味着他可以管理依赖的依赖。  
 
 For more information about setting up dependencies, read the Gradle user guide [here][13], and DSL documentation [here][14].  
-更多依赖关系配置的咨询详见[Gradle用户指南][13]和[DSL文档][14]
+更多依赖关系配置的咨询详见[Gradle用户指南][13]和[DSL文档][14]  
 
 #### Multi project setup | 多工程配置
-// TODO:
+Gradle projects can also depend on other gradle projects by using a multi-project setup.  
+A multi-project setup usually works by having all the projects as sub folders of a given root project.  
+For instance, given to following structure:  
+采用多工程配置可以shi使某Gradle工程依赖于另外的Gradle工程。如下所示：  
+
+```
+MyProject/
+ + app/
+ + libraries/
+    + lib1/
+    + lib2/
+```
+
+We can identify 3 projects. Gradle will reference them with the following name:  
+我们可以按如下所示标记这三个工程，Gradle按照名称来引用他们  
+
+```
+:app
+:libraries:lib1
+:libraries:lib2
+```
+
+Each projects will have its own build.gradle declaring how it gets built.  
+Additionally, there will be a file called settings.gradle at the root declaring the projects.  
+This gives the following structure:  
+每个工程都有他自己的build.gradle文件，用以定义构建脚本。  
+另外，在根目录下会有一个名为settings.gradle的文件用以定义各个工程。如下所示：  
+
+```
+MyProject/
+ | settings.gradle
+ + app/
+    | build.gradle
+ + libraries/
+    + lib1/
+       | build.gradle
+    + lib2/
+       | build.gradle
+
+```
+
+The content of settings.gradle is very simple，we can defines which folder is actually a Gradle project like this :  
+settings.gradle的内容非常简单，我们可以按如下所示定义这些目录实际上是一些Gradle工程：  
+```groovy
+include ':app', ':libraries:lib1', ':libraries:lib2'
+```
+The `:app` project is likely to depend on the libraries, and this is done by declaring the following dependencies:  
+`app`工程可能是依赖于其他这些库工程的，可以俺如下所示定义依赖关系：  
+
+```groovy
+dependencies {
+    compile project(':libraries:lib1')
+}
+```
+
+More general information about multi-project setup [here][15].  
+更多详情参见[多工程配置][15]  
 
 ### Library projects | 库工程
-// TODO:
+In the above multi-project setup, `:libraries:lib1` and `:libraries:lib2` can be Java projects, and the `:app` Android project will use their jar output.  
+However, if you want to share code that accesses Android APIs or uses Android-style resources, these libraries cannot be regular Java project, they have to be Android Library Projects.  
+在上面的多工程配置中`:libraries:lib1`和`:libraries:lib2`可以是java工程,而Android工程`:app`shi ji shang 实际上使用的是他们生成的jar。  
+然而，如果你要共享的代码使用了Android APIs或者使用了Android风格的资源文件，那么普通的库就不能胜任了，这就需要采用Android库工程。  
 
 #### Creating a Library Project | 创建库工程
-// TODO:
+A Library project is very similar to a regular Android project with a few differences.  
+Since building libraries is different than building applications, a different plugin is used. Internally both plugins share most of the same code and they are both provided by the same `com.android.tools.build.gradle` jar.  
+Android库工程和普通工程非常相似，只有一点区别。  
+由于Android库工程和普通工程还是有些差别，所以这就需要采用另外一个Gradle插件了。两个插件的内部实现共享了大部分代码,并且都是由同一个名为`com.android.tools.build.gradle` 的jar包提供的。  
+
+```groovy
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.6'
+    }
+}
+
+apply plugin: 'android-library'
+
+android {
+    compileSdkVersion 15
+}
+```
+
+This creates a library project that uses API 15 to compile. SourceSets, and dependencies are handled the same as they are in an application project and can be customized the same way.  
+这样就创建了一个使用API15来编译的库工程。代码集和依赖关系的自定义配置都跟主工程一样。  
 
 #### Differences between a Project and a Library Project | 普通工程和库工程的区别
-// TODO:
+A Library project's main output is an `.aar` package (which stands for Android archive). It is a combination of compile code (as a jar file and/or native .so files) and resources (manifest, res, assets).  
+A library project can also generate a test apk to test the library independently from an application.  
+库工程主要产出一个`.aar`包（标准Android archive）他整合了所有源码（比如jar文件和原生的.so文件）和资源文件（比如manifest，res，assets）。  
+库工程也可以生成一个测试APK，用于从应用独立测试该库。  
+
+The same anchor tasks are used for this (`assembleDebug`, `assembleRelease`) so there’s no difference in commands to build such a project.  
+库工程同样有锚点任务(`assembleDebug`, `assembleRelease`)，这使得他们在命令行下跟普通工程是一样的，  
+
+For the rest, libraries behave the same as application projects. They have build types and product flavors, and can potentially generate more than one version of the aar.  
+Note that most of the configuration of the Build Type do not apply to library projects. However you can use the custom sourceSet to change the content of the library depending on whether it’s used by a project or being tested.  
+其他方面，库工程的行为和普通应用工程是一样的，同样支持构建类型和产品风味，并且可以生成不止一个版本的aar。  
+需要注意的是普通应用工程的构建类型的大部分配置不会直接应用于库工程，然而却可以在测试或被用于一个工程，使用不同的代码集。  
 
 #### Referencing a Library | 引用库
-// TODO:
+Referencing a library is done the same way any other project is referenced:  
+库工程引用其他库的方式与普通工程相同：  
+
+```groovy
+dependencies {
+    compile project(':libraries:lib1')
+    compile project(':libraries:lib2')
+}
+```
+
+**Note:** if you have more than one library, then the order will be important. This is similar to the old build system where the order of the dependencies in the `project.properties` file was important.  
+**注意： ** 如有一个以上的库工程，他们的优先级顺序是很重要的，这跟之前的构建系统中的`project.properties`文件中的依赖关系顺序一样重要。  
 
 #### Library Publication | 发布库
-// TODO:
+By default a library only publishes its release variant. This variant will be used by all projects referencing the library, no matter which variant they build themselves. This is a temporary limitation due to Gradle limitations that we are working towards removing.  
+一般情况下，一个库只能发布他的release变种。这个变种要能在任何工程中引用，无论他们用什么变种构建。这是Gradle的一个临时性的限制，我们正在努力的解决这个问题。  
+
+You can control which variant gets published with  
+可以这样控制哪个变种将被发布  
+
+```groovy
+android {
+    defaultPublishConfig "debug"
+}
+```
+
+Note that this publishing configuration name references the full variant name. `Release` and `debug` are only applicable when there are no flavors. If you wanted to change the default published variant while using flavors, you would write:  
+注意发布配置要使用变种的全名，`Release`和`debug`仅能在没有任何产品风味的情况下使用，如果想要改变默认的发布风味，可以这么写：  
+
+```groovy
+android {
+    defaultPublishConfig "flavor1Debug"
+}
+```
+It is also possible to publish all variants of a library. We are planning to allow this while using a normal project-to-project dependency (like shown above), but this is not possible right now due to limitations in Gradle (we are working toward fixing those as well).  
+Publishing of all variants are not enabled by default. To enable them:  
+为库工程发布所有变种也是可行的，我们计划允许像使用工程间依赖相同的方式（如上所示），不过，由于Gradle的限制，目前还做不到这一点（我们正朝这个方向努力）。  
+发布所有变种的功能是默认关闭的，可以这样打开：  
+
+```groovy
+android {
+    publishNonDefault true
+}
+```
+
+It is important to realize that publishing multiple variants means publishing multiple aar files, instead of a single aar containing multiple variants. Each aar packaging contains a single variant.  
+Publishing an variant means making this aar available as an output artifact of the Gradle project. This can then be used either when publishing to a maven repository, or when another project creates a dependency on the library project.  
+要意识到一个很重要的事情就是，发布多个变种意味着发布很多的aar文件，而不是一个aar文件中有含有很多个单独的变种。  
+发布一个变种意味着让这个aar可以作为一个Gradle工程的神器产出。他可以被发布在maven仓库里，也可以让其他工程直接以他做为依赖。  
+
+Gradle has a concept of default artifact. This is the one that is used when writing:  
+Gradle有一个默认神器的概念，下面是用到他时的一种写法：  
+
+```groovy
+compile project(':libraries:lib2')
+```
+
+To create a dependency on another published artifact, you need to specify which one to use:  
+建立一个其他神器的依赖关系，可以指定具体要用哪个：  
+
+```groovy
+dependencies {
+    flavor1Compile project(path: ':lib1', configuration: 'flavor1Release')
+    flavor2Compile project(path: ':lib1', configuration: 'flavor2Release')
+}
+```
+
+**Important:** Note that the published configuration is a full variant, including the build type, and needs to be referenced as such.  
+**Important:** When enabling publishing of non default, the Maven publishing plugin will publish these additional variants as extra packages (with classifier). This means that this is not really compatible with publishing to a maven repository. You should either publish a single variant to a repository OR enable all config publishing for inter-project dependencies.  
+**重要：** 注意发布出来的配置是个全功能变种，包括了构建类型，还有他们需要的引用之类的。  
+**重要：** 如果开启了非默认的发布，maven的发布插件将会发布那些附加变种和额外的包（包含classifier）。这就意味着不能真正兼容于maven库的发布。你需要单独在仓库中发布一个变种，或者将所有有依赖关系的工程都开起发布。  
 
 ## Testing | 测试
 // TODO:
@@ -1083,3 +1244,4 @@ These allow customization at the flavor-combination level. They have higher prio
 [12]: http://developer.android.com/google/play/publishing/multiple-apks.html                            "Multiple APK Support"
 [13]: http://gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html                      "Dependency Management Basics"
 [14]: http://gradle.org/docs/current/dsl/org.gradle.api.artifacts.dsl.DependencyHandler.html            "DependencyHandler"
+[15]: https://docs.gradle.org/current/userguide/multi_project_builds.html                               "Multi-project Builds"
