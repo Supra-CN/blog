@@ -422,7 +422,6 @@ android {
 
 签名的配置（`SigningConfig`）包括签名文件目录位置以及名称，两个密码  
 
-The debug keystore is located in `$HOME/.android/debug.keystore`, and is created if not present.  
 默认的，debug配置会自动设置一个已知name和密码的keystore。  
 他会在自动创建在`$HOME/.android/debug.keystore`目录中。
 
@@ -497,34 +496,208 @@ android {
 可以在编译时自动删除没有使用的资源，详情参见文档[压缩资源][11]
 
 ## Dependencies, Android Libraries and Multi-project setup | 依赖关系，Android库和Multi-project配置
-// TODO:
+Gradle工程有可能是依赖于其他组件的，这些组件可以是一个外部的二进制包，或者是另外一个Gradle工程  
 
 ### Dependencies on binary packages | 依赖于二进制包
-// TODO:
-
 #### Local packages | 本地包
-// TODO:
+可以通过配置`compile`属性来配置一个外部jar包。
+
+```groovy
+dependencies {
+    compile files('libs/foo.jar')
+}
+
+android {
+    ...
+}
+```
+
+**注意：** `dependencies`DSL元素是Gradle标准API的一部分，而并非属于`android`元素。  
+
+该编译配置将会用在编译主应用时，他定义的所有东西都会加入编译的classpath，并且会被打进最终的包里。  
+其他添加依赖关系的方式有如下几种：
+
+- `compile`: main application
+- `androidTestCompile`: test application
+- `debugCompile`: debug Build Type
+- `releaseCompile`: release Build Type.
+
+以为依赖库本身并不能构建出一个APK文件来，所以他们不支持划分编译类型，APK的编译类型永远只有这两大类： `compile` and `<buildtype>Compile`。  
+创建一个新的构建类型将会基于构建类型名称自动的生成一个新的构建配置。  
+
+这在下边的情况下是很有用的，如调试版本需要用到一个特殊的库（比如崩溃报告），而发行版并不需要，或者他们依赖于同一个库的不同版本。  
 
 #### Remote artifacts | 远端神器
-// TODO:
+Gradle支持采用Maven和Ivy自动拉去远端神器（就是指具体的依赖包）。
+
+首先，依赖包的库必须在他们的可用列表里，然后，需要按照Maven或Ivy的方式把他们声明出来。  
+
+```groovy
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile 'com.google.guava:guava:11.0.2'
+}
+
+android {
+    ...
+}
+```
+
+**注意：** `mavenCentral()`是指定中心仓库URL的快捷方式,Gradle同时支持远端和本地仓库。  
+**注意：** Gradle遵循依赖关系的传递性，这意味着他可以管理依赖的依赖。  
+
+更多依赖关系配置的咨询详见[Gradle用户指南][13]和[DSL文档][14]  
 
 #### Multi project setup | 多工程配置
-// TODO:
+采用多工程配置可以shi使某Gradle工程依赖于另外的Gradle工程。如下所示：  
+
+```
+MyProject/
+ + app/
+ + libraries/
+    + lib1/
+    + lib2/
+```
+
+我们可以按如下所示标记这三个工程，Gradle按照名称来引用他们  
+
+```
+:app
+:libraries:lib1
+:libraries:lib2
+```
+
+每个工程都有他自己的build.gradle文件，用以定义构建脚本。  
+另外，在根目录下会有一个名为settings.gradle的文件用以定义各个工程。如下所示：  
+
+```
+MyProject/
+ | settings.gradle
+ + app/
+    | build.gradle
+ + libraries/
+    + lib1/
+       | build.gradle
+    + lib2/
+       | build.gradle
+
+```
+
+settings.gradle的内容非常简单，我们可以按如下所示定义这些目录实际上是一些Gradle工程：  
+```groovy
+include ':app', ':libraries:lib1', ':libraries:lib2'
+```
+`app`工程可能是依赖于其他这些库工程的，可以俺如下所示定义依赖关系：  
+
+```groovy
+dependencies {
+    compile project(':libraries:lib1')
+}
+```
+
+More general information about multi-project setup [here][15].  
+更多详情参见[多工程配置][15]  
 
 ### Library projects | 库工程
-// TODO:
+在上面的多工程配置中`:libraries:lib1`和`:libraries:lib2`可以是java工程,而Android工程`:app`shi ji shang 实际上使用的是他们生成的jar。  
+然而，如果你要共享的代码使用了Android APIs或者使用了Android风格的资源文件，那么普通的库就不能胜任了，这就需要采用Android库工程。  
 
 #### Creating a Library Project | 创建库工程
-// TODO:
+Android库工程和普通工程非常相似，只有一点区别。  
+由于Android库工程和普通工程还是有些差别，所以这就需要采用另外一个Gradle插件了。两个插件的内部实现共享了大部分代码,并且都是由同一个名为`com.android.tools.build.gradle` 的jar包提供的。  
+
+```groovy
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.6'
+    }
+}
+
+apply plugin: 'android-library'
+
+android {
+    compileSdkVersion 15
+}
+```
+
+这样就创建了一个使用API15来编译的库工程。代码集和依赖关系的自定义配置都跟主工程一样。  
 
 #### Differences between a Project and a Library Project | 普通工程和库工程的区别
-// TODO:
+库工程主要产出一个`.aar`包（标准Android archive）他整合了所有源码（比如jar文件和原生的.so文件）和资源文件（比如manifest，res，assets）。  
+库工程也可以生成一个测试APK，用于从应用独立测试该库。  
+
+库工程同样有锚点任务(`assembleDebug`, `assembleRelease`)，这使得他们在命令行下跟普通工程是一样的，  
+
+其他方面，库工程的行为和普通应用工程是一样的，同样支持构建类型和产品风味，并且可以生成不止一个版本的aar。  
+需要注意的是普通应用工程的构建类型的大部分配置不会直接应用于库工程，然而却可以在测试或被用于一个工程，使用不同的代码集。  
 
 #### Referencing a Library | 引用库
-// TODO:
+库工程引用其他库的方式与普通工程相同：  
+
+```groovy
+dependencies {
+    compile project(':libraries:lib1')
+    compile project(':libraries:lib2')
+}
+```
+
+**注意： ** 如有一个以上的库工程，他们的优先级顺序是很重要的，这跟之前的构建系统中的`project.properties`文件中的依赖关系顺序一样重要。  
 
 #### Library Publication | 发布库
-// TODO:
+一般情况下，一个库只能发布他的release变种。这个变种要能在任何工程中引用，无论他们用什么变种构建。这是Gradle的一个临时性的限制，我们正在努力的解决这个问题。  
+
+可以这样控制哪个变种将被发布  
+
+```groovy
+android {
+    defaultPublishConfig "debug"
+}
+```
+
+注意发布配置要使用变种的全名，`Release`和`debug`仅能在没有任何产品风味的情况下使用，如果想要改变默认的发布风味，可以这么写：  
+
+```groovy
+android {
+    defaultPublishConfig "flavor1Debug"
+}
+```
+为库工程发布所有变种也是可行的，我们计划允许像使用工程间依赖相同的方式（如上所示），不过，由于Gradle的限制，目前还做不到这一点（我们正朝这个方向努力）。  
+发布所有变种的功能是默认关闭的，可以这样打开：  
+
+```groovy
+android {
+    publishNonDefault true
+}
+```
+
+要意识到一个很重要的事情就是，发布多个变种意味着发布很多的aar文件，而不是一个aar文件中有含有很多个单独的变种。  
+发布一个变种意味着让这个aar可以作为一个Gradle工程的神器产出。他可以被发布在maven仓库里，也可以让其他工程直接以他做为依赖。  
+
+Gradle有一个默认神器的概念，下面是用到他时的一种写法：  
+
+```groovy
+compile project(':libraries:lib2')
+```
+
+建立一个其他神器的依赖关系，可以指定具体要用哪个：  
+
+```groovy
+dependencies {
+    flavor1Compile project(path: ':lib1', configuration: 'flavor1Release')
+    flavor2Compile project(path: ':lib1', configuration: 'flavor2Release')
+}
+```
+
+**重要：** 注意发布出来的配置是个全功能变种，包括了构建类型，还有他们需要的引用之类的。  
+**重要：** 如果开启了非默认的发布，maven的发布插件将会发布那些附加变种和额外的包（包含classifier）。这就意味着不能真正兼容于maven库的发布。你需要单独在仓库中发布一个变种，或者将所有有依赖关系的工程都开起发布。  
 
 ## Testing | 测试
 // TODO:
@@ -825,3 +998,6 @@ android {
 [10]: http://stackoverflow.com/questions/18328730/how-to-create-a-release-signed-apk-file-using-gradle  "How to create a release signed apk file using Gradle?"
 [11]: http://tools.android.com/tech-docs/new-build-system/resource-shrinking                            "Resource Shrinking"
 [12]: http://developer.android.com/google/play/publishing/multiple-apks.html                            "Multiple APK Support"
+[13]: http://gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html                      "Dependency Management Basics"
+[14]: http://gradle.org/docs/current/dsl/org.gradle.api.artifacts.dsl.DependencyHandler.html            "DependencyHandler"
+[15]: https://docs.gradle.org/current/userguide/multi_project_builds.html                               "Multi-project Builds"
