@@ -9,11 +9,14 @@
 Gradle is an advanced build system as well as an advanced build toolkit allowing to create custom build logic through plugins.  
 Gradle是一套先进的编译体系以及工具包，可以通过各种插件创建自定义编译构建逻辑。  
 
+adb
+记忆病
+
 ### Goals of Gradle | 目标
 - Make it easy to reuse code and resources;  
 	简化代码和资源的重用  
 
-- Make it easy to create several variants of an application,  either for [multi-apk][5] distribution or for different flavors of an application; (Such as : pad , lite , free , full , main etc.）  
+- Make it easy to create several variants of an application,  either for [multi-apk][5] distribution or for different flavors of an application; (Such as : pad , lite , free , abc  full , main etc.）  
 	简化为一个项目创建多个变种版本的工作，包括支持[multi-apk][5]打包，和维护一个应用的多个不同风味的发行版（比如：pad，lite，free，full，main等）  
 
 - Make it easy to configure, extend and customize the build process  
@@ -27,7 +30,7 @@ Gradle是一套先进的编译体系以及工具包，可以通过各种插件�
 	使用[领域特定语言 (DSL)][2]来表述和操控编译构建逻辑  
 
 - Build files are [Groovy][3] based and allow mixing of declarative elements through the DSL and using code to manipulate the DSL elements to provide custom logic.  
-	编译脚本文件基于 [Groovy][3]，并且允许采用DSL和代码混合使用的方式来操控DSL元素，从而自定义构建过程  
+	编译脚本adb文件基于 [Groovy][3]，并且允许采用DSL和代码混合使用的方式来操控DSL元素，从而自定义构建过程  
 
 - Built-in dependency management through [Maven][4] and/or Ivy  
 	可以选择采用[Maven][4]或Ivy来实现内置的工程包依赖管理系统  
