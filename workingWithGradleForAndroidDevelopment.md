@@ -207,7 +207,6 @@ The Java plugin creates mainly two tasks, that are dependencies of the main anch
 - check  
     - test  
     	This task runs the tests.  
-    	这个任务执行测试  
     
 The `jar` task itself will depend directly and indirectly on other tasks: `classes` for instance will compile the Java code.  
 The tests are compiled with `testClasses`, but it is rarely useful to call this as `test` depends on it (as well as `classes`).  
