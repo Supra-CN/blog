@@ -58,15 +58,16 @@ git config --global user.email wangjia20@baidu.com
 [slide]
 ## 公司仓库分支结构
 * `master` - 充当主干分支，master分支的HEAD永远是线上最新release版本的tag  {:&.rollIn}
-* `team1` `team2` `...` - 充当团队迭代开发分支，每次迭代开始前将master上的提交merge或rebase过来，每次迭代封版后，打tag并合回主干；
-* `story1` `story2` `...` - 使用icafe创建story卡片对应的分支,单元测试完成后再合回迭代分支；
+* `sprint1` `sprint2` `...` - 迭代小组开发分支，每次迭代开始前基于master HEAD，也就是最新的发版tag的创建分支，每次迭代封版后，rebase主干分支，打tag并merge回到主干后删除；
+* `story1` `story2` `...` - 使用icafe创建story卡片对应的分支，基于迭代分支的HEAD，提测或单元测试完成后rebase迭代分支，merge回迭代分支后删除分支；
 * `topic1` `topic2` `...` - topic认领或技术组同学独立开发分支，从master分支拉出，开发完毕后rebase方式合回任意迭代的开发分支，并删除分支；
 * `hotfix` - 基于某次release版本的tag临时创建的分支，用于修复线上bug，重新封版发布后，打tag并合回主干，并删除分支；
 
 [slide]
 ## 本地仓库分支结构
-* `story1` `story2` `...` track origin/team1 - 用于开发迭代story1的本地分支，对应上游分支是team1；功能开发完成后rebase并push到远端的team1分支，通过审核后删除分支； {:&.rollIn}
-* `team1` track origin/team1 - 迭代团队的开发开发，对应上游分支是team1；用于story提测后修复bug，如果story较小，也可用于开发story；
+* `sprint1` track origin/sprint1 - 迭代团队的开发分支，对应上游分支是team1；用于story提测后修复bug，如果story较小，也可直接用于开发story； {:&.rollIn}
+* `story1` `story2` `...` track origin/sprint1 - 用于开发迭代story1的本地分支，对应上游分支是team1；功能开发完成后rebase并push到远端的sprint分支，通过审核后删除分支； 
+* `story3` track origin/story3 - 用于开发迭代story1的本地分支，对应上游分支是story3；功能开发完成后rebase并push到远端的sprint分支，合并回迭代后删除分支；
 * `topic1` track origin/topic1 - topic认领或技术组同学独立开发分支，可以没有对应的上游分支，也可以对应上游分支topic1，开发完成后提交给上游的topic1分支或某迭代的开发分支；
 * `hotfix` track origin/hotfix - 用于修复bug，对应上游分支是hotfix，重新封版后打tag回归主干。
 * `study` no track - RD自研项目分支，没有追踪上游分支。
@@ -91,64 +92,99 @@ $ git checkout master
 $ git merge dev
 $ git push
 $ git push tags
+
+#删除dev分支
+$ git branch -d dev
 ```
 
 [slide]
 ## 百度icode普通story开发工作流
 ``` sh
-#基于迭代开发分支新建分支story1
-$ git checkout -b story1 -t origin/team1
+#迭代负责人: 基于master创建迭代分支sprint1并推送到服务器
+$ git checkout -b sprint1 master
+$ git push -u
 
-#开发功能，可能发生了若干次本地提交
+#RD: 基于迭代开发分支新建分支story1
+$ git checkout -b story1 -t origin/sprint1
+
+#RD: 开发功能，可能发生了若干次本地提交
 $ git commit -m "功能开发"
 ...
 $ git commit -m "功能提测"
 
-#功能提测，代码合回开发分支
-$ git review -r team1 #git push origin story1:refs/for/team1
+#RD: 功能提测，rebase最新sprint代码并提交审核
+$ git rebase
+$ git review -r sprint1 #git push origin sprint1:refs/for/sprint1
 
-#切会迭代分支修改bug跟进QA，提交修改
-$ git checkout team1
-$ git commit -m "修复bug"
-$ git review  #git push origin team1:refs/for/team1
+#RD: 继续跟进QA修改bug，或者开新的story分支开发新功能
 
-#合回代码并封版
+#迭代负责人: 全功能集成提测并封版
 $ git rebase master
 $ git tag v7.2.0
-$ git review  #git push origin team1:refs/for/team1
+$ git review  #git push origin sprint1:refs/for/sprint1
 $ git push tags
 
-#最后在icode上将team1分支合并回归到master主干
+#迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
 ```
+
 [slide]
 ## 关联icafe卡片的story开发工作流
 ``` sh
-#基于迭代开发分支新建分支story1
+#迭代负责人: 基于master创建迭代分支sprint1并推送到服务器
+$ git checkout -b sprint1 master
+$ git push -u
+
+#RD: 在icafe卡片上，基于sprint1新建story分支，并检出本地分支
 $ git checkout -b story1 -t origin/story1
 
-#开发功能，可能发生了若干次本地提交
+#RD: 开发功能，可能发生了若干次本地提交
 $ git commit -m "功能开发"
 ...
 $ git commit -m "功能提测"
 
-#功能提测，评审通过后
+#RD: 功能提测，rebase并在icode上merge回sprint
 $ git pull
+$ git rebase sprint1
 $ git review #git push origin story1:refs/for/story1
-#在icode上将代码合回开发分支，并删除分支。
 
-#切会迭代分支修改bug跟进QA，提交修改
-$ git checkout team1
-$ git pull
-$ git commit -m "修复bug"
-$ git review #git push origin team1:refs/for/team1
 
-#合回代码并封版
+#RD: 继续跟进QA修改bug，或者开新的story分支开发新功能
+
+#迭代负责人: 全功能集成提测并封版
 $ git rebase master
 $ git tag v7.2.0
-$ git review #git push origin team1:refs/for/team1
+$ git review  #git push origin team1:refs/for/team1
 $ git push tags
 
-#最后在icode上将team1分支合并回归到master主干
+#迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
+```
+
+[slide]
+## 技术小组或topic独立开发工作流
+``` sh
+#RD: 基于master创建迭代分支sprint1并推送到服务器
+$ git checkout -b topic1 master
+$ git push -u
+
+#RD: 开发功能，可能发生了若干次本地提交
+$ git commit -m "功能开发"
+...
+$ git commit -m "功能提测"
+
+#RD: 功能提测，rebase并在icode上merge回sprint
+$ git pull
+$ git rebase sprint1
+$ git review #git push origin story1:refs/for/story1
+
+#RD: 继续跟进QA修改bug，或者开新的story分支开发新功能
+
+#迭代负责人: 全功能集成提测并封版
+$ git rebase master
+$ git tag v7.2.0
+$ git review  #git push origin team1:refs/for/team1
+$ git push tags
+
+#迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
 ```
 
 [slide]
