@@ -65,8 +65,8 @@ git config --global user.email wangjia20@baidu.com
 
 [slide]
 ## 本地仓库分支结构
-* `sprint1` track origin/sprint1 - 迭代团队的开发分支，对应上游分支是team1；用于story提测后修复bug，如果story较小，也可直接用于开发story； {:&.rollIn}
-* `story1` `story2` `...` track origin/sprint1 - 用于开发迭代story1的本地分支，对应上游分支是team1；功能开发完成后rebase并push到远端的sprint分支，通过审核后删除分支； 
+* `sprint1` track origin/sprint1 - 迭代团队的开发分支，对应上游分支是sprint1；用于story提测后修复bug，如果story较小，也可直接用于开发story； {:&.rollIn}
+* `story1` `story2` `...` track origin/sprint1 - 用于开发迭代story1的本地分支，对应上游分支是sprint1；功能开发完成后rebase并push到远端的sprint分支，通过审核后删除分支； 
 * `story3` track origin/story3 - 用于开发迭代story1的本地分支，对应上游分支是story3；功能开发完成后rebase并push到远端的sprint分支，合并回迭代后删除分支；
 * `topic1` track origin/topic1 - topic认领或技术组同学独立开发分支，可以没有对应的上游分支，也可以对应上游分支topic1，开发完成后提交给上游的topic1分支或某迭代的开发分支；
 * `hotfix` track origin/hotfix - 用于修复bug，对应上游分支是hotfix，重新封版后打tag回归主干。
@@ -153,7 +153,7 @@ $ git review #git push origin story1:refs/for/story1
 #迭代负责人: 全功能集成提测并封版
 $ git rebase master
 $ git tag v7.2.0
-$ git review  #git push origin team1:refs/for/team1
+$ git review  #git push origin sprint1:refs/for/sprint1
 $ git push tags
 
 #迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
@@ -181,7 +181,37 @@ $ git review #git push origin story1:refs/for/story1
 #迭代负责人: 全功能集成提测并封版
 $ git rebase master
 $ git tag v7.2.0
-$ git review  #git push origin team1:refs/for/team1
+$ git review  #git push origin sprint1:refs/for/sprint1
+$ git push tags
+
+#迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
+```
+
+[slide]
+## 线上bug hot fix开发工作流
+``` sh
+#RD: 基于master创建迭代分支sprint1并推送到服务器
+$ git checkout -b hotfix master
+$ git push -u
+
+#RD: 开发功能，可能发生了若干次本地提交
+$ git commit -m "功能开发"
+...
+$ git commit -m "功能提测"
+
+#RD: 功能提测
+$ git pull
+$ git review #git push origin hotfix:refs/for/hotfix
+
+#RD: 封版发布
+$ git tag v7.2.1-hotfix
+
+#RD: 将更改合回迭代前rebase迭代分支的最新代码
+$ git rebase sprint1
+
+#迭代负责人: 在icode上合并hotfix代码后，全功能集成提测并封版
+$ git rebase master
+$ git review  #git push origin sprint1:refs/for/sprint1
 $ git push tags
 
 #迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
