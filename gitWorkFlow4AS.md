@@ -97,8 +97,7 @@ $ git push tags
 ## 百度icode普通story开发工作流
 ``` sh
 #基于迭代开发分支新建分支story1
-$ git branch -u -b story1 origin/team1
-$ git checkout story1
+$ git checkout -b story1 -t origin/team1
 
 #开发功能，可能发生了若干次本地提交
 $ git commit -m "功能开发"
@@ -125,8 +124,7 @@ $ git push tags
 ## 关联icafe卡片的story开发工作流
 ``` sh
 #基于迭代开发分支新建分支story1
-$ git branch -u -b story1 origin/story1
-$ git checkout story1
+$ git branch -b story1 -t origin/story1
 
 #开发功能，可能发生了若干次本地提交
 $ git commit -m "功能开发"
