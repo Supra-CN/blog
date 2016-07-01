@@ -61,7 +61,7 @@ git config --global user.email wangjia20@baidu.com
 * `sprint1` `sprint2` `...` - 迭代小组开发分支，每次迭代开始前基于master HEAD，也就是最新的发版tag的创建分支，每次迭代封版后，rebase主干分支，打tag并merge回到主干后删除；
 * `story1` `story2` `...` - 使用icafe创建story卡片对应的分支，基于迭代分支的HEAD，提测或单元测试完成后rebase迭代分支，merge回迭代分支后删除分支；
 * `topic1` `topic2` `...` - topic认领或技术组同学独立开发分支，从master分支拉出，开发完毕后rebase方式合回任意迭代的开发分支，并删除分支；
-* `hotfix` - 基于某次release版本的tag临时创建的分支，用于修复线上bug，重新封版发布后，打tag并合回主干，并删除分支；
+* `hotfix` - 基于某次release版本的tag临时创建的分支，用于修复线上bug，重新封版发布后，打tag并rebase合回任一迭代分支，并删除分支；
 
 [slide]
 ## 本地仓库分支结构
@@ -69,7 +69,7 @@ git config --global user.email wangjia20@baidu.com
 * `story1` `story2` `...` track origin/sprint1 - 用于开发迭代story1的本地分支，对应上游分支是sprint1；功能开发完成后rebase并push到远端的sprint分支，通过审核后删除分支； 
 * `story3` track origin/story3 - 用于开发迭代story1的本地分支，对应上游分支是story3；功能开发完成后rebase并push到远端的sprint分支，合并回迭代后删除分支；
 * `topic1` track origin/topic1 - topic认领或技术组同学独立开发分支，可以没有对应的上游分支，也可以对应上游分支topic1，开发完成后提交给上游的topic1分支或某迭代的开发分支；
-* `hotfix` track origin/hotfix - 用于修复bug，对应上游分支是hotfix，重新封版后打tag回归主干。
+* `hotfix` track origin/hotfix - 用于修复bug，对应上游分支是hotfix，重新封版后打tag，任一迭代分支。
 * `study` no track - RD自研项目分支，没有追踪上游分支。
 
 [slide]
