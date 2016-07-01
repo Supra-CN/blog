@@ -164,3 +164,6 @@ android studio环境下与命令行环境下的操作并无二异；安装好ger
 1. 切到与带审核提交同源的一个干净分支上
 1. git review -d CHANGE_ID
 1. 打开Android Studio查看审核代码
+
+[slide]
+# 谢谢
