@@ -115,7 +115,6 @@ $ git commit -m "功能提测"
 #RD: 功能提测，rebase最新sprint代码并提交审核
 $ git rebase
 $ git review -r sprint1 #git push origin sprint1:refs/for/sprint1
-
 #RD: 继续跟进QA修改bug，或者开新的story分支开发新功能
 
 #迭代负责人: 全功能集成提测并封版
@@ -123,7 +122,6 @@ $ git rebase master
 $ git tag v7.2.0
 $ git review  #git push origin sprint1:refs/for/sprint1
 $ git push tags
-
 #迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
 ```
 
@@ -146,8 +144,6 @@ $ git commit -m "功能提测"
 $ git pull
 $ git rebase sprint1
 $ git review #git push origin story1:refs/for/story1
-
-
 #RD: 继续跟进QA修改bug，或者开新的story分支开发新功能
 
 #迭代负责人: 全功能集成提测并封版
@@ -155,7 +151,6 @@ $ git rebase master
 $ git tag v7.2.0
 $ git review  #git push origin sprint1:refs/for/sprint1
 $ git push tags
-
 #迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
 ```
 
@@ -175,7 +170,6 @@ $ git commit -m "功能提测"
 $ git pull
 $ git rebase sprint1
 $ git review #git push origin story1:refs/for/story1
-
 #RD: 继续跟进QA修改bug，或者开新的story分支开发新功能
 
 #迭代负责人: 全功能集成提测并封版
@@ -213,7 +207,6 @@ $ git rebase sprint1
 $ git rebase master
 $ git review  #git push origin sprint1:refs/for/sprint1
 $ git push tags
-
 #迭代负责人: 最后在icode上将sprint1分支合并回归到master主干后删除分支
 ```
 
