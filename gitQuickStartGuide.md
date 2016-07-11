@@ -8,12 +8,14 @@ usemathjax: yes
 # svn迁移git快速上手指南
 ## 1 起步
 ### 1.1 Git简介
+
  * git是用于Linux内核开发的版本控制工具。与CVS、Subversion一类的集中式版本控制工具不同，它采用了分布式版本库的作法，不需要服务器端软件，就可以运作版本控制，使得源代码的发布和交流极其方便。git的速度很快，这对于诸如Linux内核这样的大项目来说自然很重要。git最为出色的是它的合并追踪（merge tracing）能力。 {:&.rollIn}
  * 设计目标：高度易用、速度、简单的设计、非线性开发模式、完全分布式、有能力高效管理类似 Linux 内核一样的超大规模项目（速度和数据量）。
  * 作为开源自由原教旨主义项目，git没有对版本库的浏览和修改做任何的权限限制，通过其他工具也可以达到有限的权限控制
 
 [slide]
 ### 1.2 基本概念对照表
+
  概念              | SVN                 | GIT 
 ------------------|----------------------|---------------------
 某个版本或某次提交   |revision(递增的数字)  |commit(40位的SHA摘要值)
@@ -25,6 +27,7 @@ Studio用GUI插件    |cooder插件            |gerrit插件
 
 [slide]
 ### 1.3 基本操作对照表
+
  操作              | SVN                     | GIT 
 -------------------|-------------------------|---------------------
 取出版本库          |无                       |git clone
@@ -40,6 +43,7 @@ Studio用GUI插件    |cooder插件            |gerrit插件
 [slide]
 ## 2 环境配置
 ### 2.1 git下开发所需工具一览
+
 * `git` - git功能主程序   {:&.rollIn}
 * `git-review` - git review子命令，帮助完成更便捷的代码评审功能 
 * `gerrit`插件 - Android Studio代码评审插件，一键提交代码评审
@@ -48,6 +52,7 @@ Studio用GUI插件    |cooder插件            |gerrit插件
 
 [slide]
 ### 2.2 安装git和git-review子命令,配置git环境
+
 ``` sh
 #安装git
 $ sudo apt-get install git
@@ -101,6 +106,7 @@ $ scp -p -P 8235 wangjia20@icode.baidu.com:hooks/commit-msg playground/.git/hook
 
 [slide]
 ### 3.2 第三步 配置用户信息
+
 ``` sh
 #仅为本仓库配置用户信息
 $ git config user.name wangjia20
@@ -116,6 +122,7 @@ $ git config --global user.email wangjia20@baidu.com
 [slide]
 ## 4 git仓库基本操作
 ### 4.1 常用命令
+
 * **更新远程状态** - `git fetch`  {:&.rollIn}
 * **查看当前状态** - `git status`  
 * **查看日志信息** - `git log`
@@ -130,6 +137,7 @@ $ git config --global user.email wangjia20@baidu.com
 [slide]
 ### 4.2 分支操作
 #### 4.2.1 查看分支信息
+
 * **选项 -a**  表示查看全部分支，包括本地分支和远程分支  {:&.rollIn}
 * **选项 -vv** 表示显示分支详情，包括分支跟踪信息和最后一次提交
 * **输出** |当前分支标记|分支名|HEAD提交|分支跟踪信息|HEAD提交日志|
@@ -155,6 +163,7 @@ $ git branch -a -vv
 
 [slide]
 #### 4.2.2 创建分支
+
 * **选项 -t** 起点是一个分支时，表示将起点分支设置为新分支的跟踪分支  {:&.rollIn}
 * **参数 <新分支>** 必要，待创建的分支名
 * **参数 <起点>** 非必要，迁出新分支时指定起点，默认当前分支作为起点，这个起点可以是任何一个提交
@@ -166,6 +175,7 @@ $ git branch <目标分支> -t <起点>
 
 [slide]
 #### 4.2.3 迁出和创建分支
+
 * **选项 -b** 表示创建切换新分支上，包括本地分支和远程分支  {:&.rollIn}
 * **选项 -t** 迁出新分支时，表示将起点分支设置为新分支的跟踪分支
 * **参数 <目标分支>** 必要，待迁出的分支名
@@ -178,6 +188,7 @@ $ git checkout -b <目标分支> -t <起点分支>
 
 [slide]
 #### 4.2.4 删除本地分支
+
 * **选项 -d** 表示删除目标分支  {:&.rollIn}
 * **参数 <目标分支>** 必要，待删除的分支名
 * **输出** 操作的结果
@@ -188,6 +199,7 @@ $ git branch -d <目标分支>
 
 [slide]
 #### 4.2.5 删除远程分支
+
 * **选项 --delete** 表示删除目标分支  {:&.rollIn}
 * **参数 <remove>** 必要，远端仓库别名
 * **参数 <目标分支>** 必要，待删除的分支名
@@ -200,6 +212,7 @@ $ git push --delete <remote> <目标分支>
 [slide]
 ### 4.3 协同开发
 #### 4.3.1 本地提交
+
 * **选项 -m** 输入提交日志  {:&.rollIn}
 * **输出** 提交的结果
 
@@ -210,9 +223,11 @@ $ git commit -m "提交日志"
 
 [slide]
 #### 4.3.2 拉取其他分支上的更新
+
 * **参数 <repo> <refs>** 可选，指定拉取更新的目标仓库和目标分支  {:&.rollIn}
 * **无参数** 拉取当前分支跟踪的分支，如果没有设置跟踪分支，就会失败
 * **输出** 拉取的结果
+
 ```sh
 $ git pull [<repo> [<refs>]]
 ```
@@ -224,6 +239,7 @@ $ git pull [<repo> [<refs>]]
 * **参数 <repo> <refs>** 可选，指定推送提交的目标仓库和目标分支 
 * **无参数** 推送当前分支到跟踪的分支，如果没有设置跟踪分支，就会失败
 * **输出** 推送的结果
+
 ```sh
 $ git push -u [<repo> [<refs>]]
 ```
@@ -235,6 +251,7 @@ $ git push -u [<repo> [<refs>]]
 * **参数 BRANCH** 可选，指定推送提交的目标仓库和目标分支 
 * **无参数** 推送当前分支到跟踪的分支，如果没有设置跟踪分支，就会失败
 * **输出** 推送的结果和代码审核ID
+
 ```sh
 $ git review --track [BRANCH]
 ```
@@ -246,27 +263,32 @@ $ git review --track [BRANCH]
 * **参数 CHANGE** 可选，指定推送提交的目标仓库和目标分支 
 * **无参数** 推送当前分支到跟踪的分支，如果没有设置跟踪分支，就会失败
 * **输出** 拉取的结果
+
 ```sh
 $ git review -d [CHANGE]
 ```
 
 [slide]
 #### 4.3.5 合并分支代码
+
 * 在icode上可以合并无冲突的分支，如果代码有冲突的话就需要在本地合并解决冲突  {:&.rollIn}
 * **参数 目标分支** 待合并的分支 
 * **输出** 合并的结果
+
 ```sh
 $ git merge 目标分支
 ```
 
 [slide] 
 ### 4.4 快速入门学习资料
+
 * 图解Git - https://marklodato.github.io/visual-git-guide/index-zh-cn.html   {:&.rollIn}
 * git book - http://gitbook.liuhui998.com/
 * pro git - https://progit.org/
 
 [slide]
-## 公司仓库分支结构
+## 5 项目分支结构
+### 5.1 公司仓库分支结构
 
 * `master` - 充当主干分支，master分支的HEAD永远是线上最新release版本的tag  {:&.rollIn}
 * `sprint1` `sprint2` `...` - 迭代小组开发分支，每次迭代开始前基于master HEAD，也就是最新的发版tag的创建分支，每次迭代封版后，rebase主干分支，打tag并merge回到主干后删除；
@@ -276,7 +298,7 @@ $ git merge 目标分支
 * `experiment/*` - 实验性质的分支，无特殊限制；
 
 [slide]
-## 本地仓库分支结构
+### 5.2 本地仓库分支结构
 
 * `sprint1` track origin/sprint1 - 迭代团队的开发分支，对应上游分支是sprint1；用于story提测后修复bug，如果story较小，也可直接用于开发story； {:&.rollIn}
 * `story1` `story2` `feature/*` `...` track origin/sprint1 - 用于开发迭代story1的本地分支，对应上游分支是sprint1；功能开发完成后rebase并push到远端的sprint分支，通过审核后删除分支； 
@@ -287,7 +309,9 @@ $ git merge 目标分支
 * `study` no track - RD自研项目分支，没有追踪上游分支。
 
 [slide]
-## 普通开发工作流
+## 6 开发工作流
+### 6.1 普通开发工作流
+
 ``` sh
 #创建并切到本地分支，并跟踪上游迭代开发分支
 $ git checkout -b dev
@@ -312,7 +336,8 @@ $ git branch -d dev
 ```
 
 [slide]
-## 百度icode普通story开发工作流
+### 6.2 百度icode普通story开发工作流
+
 ``` sh
 #迭代负责人: 基于master创建迭代分支sprint1并推送到服务器
 $ git checkout -b sprint1 master
@@ -340,7 +365,8 @@ $ git push tags
 ```
 
 [slide]
-## 关联icafe卡片的story开发工作流
+### 6.3 关联icafe卡片的story开发工作流
+
 ``` sh
 #迭代负责人: 基于master创建迭代分支sprint1并推送到服务器
 $ git checkout -b sprint1 master
@@ -369,7 +395,8 @@ $ git push tags
 ```
 
 [slide]
-## 技术小组或topic独立开发工作流
+### 6.4 技术小组或topic独立开发工作流
+
 ``` sh
 #RD: 基于master创建迭代分支sprint1并推送到服务器
 $ git checkout -b topic1 master
@@ -396,7 +423,8 @@ $ git push tags
 ```
 
 [slide]
-## 线上bug hot fix开发工作流
+### 6.5 线上bug hot fix开发工作流
+
 ``` sh
 #RD: 基于master创建迭代分支sprint1并推送到服务器
 $ git checkout -b hotfix master
@@ -425,11 +453,11 @@ $ git push tags
 ```
 
 [slide]
-## android studio gerrit plugin
+## 7 android studio gerrit plugin
 android studio环境下与命令行环境下的操作并无二异；安装好gerrit插件后，只需在push对话框里勾选`push to gerrit`选项就好了；
 
 [slide]
-## 本地代码审核
+## 8 本地代码审核
 
 1. 打开icode找到带审核提交的CHANGE_ID {:&.rollIn}
 1. 切到与带审核提交同源的一个干净分支上
