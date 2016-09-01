@@ -6,7 +6,7 @@
 |Charlie    |ai               |delta的驾驶员                          |
 |Delta      |delta            |一辆小车                               |
 |Echo       |internalAffairs  |一款猜词游戏                           |
-|Foxtrot    |                 |                                       |
+|Foxtrot    |supower          |android dev lib                        |
 |Golf       |                 |                                       |
 |Hotel      |                 |                                       |
 |India      |                 |                                       |
